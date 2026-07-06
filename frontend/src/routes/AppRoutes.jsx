@@ -10,24 +10,47 @@ import Register from "../pages/Register/Register";
 import Account from "../pages/Account/Account";
 import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
-//import NotFound from "../pages/NotFound/NotFound";
+
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
-  return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/shop" element={<Shop />} />
-      <Route path="/ProductDetails" element={<ProductDetails />} />
-      <Route path="/cart" element={<Cart />} />
-      <Route path="/checkout" element={<Checkout />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/account" element={<Account />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      {/*<Route path="*" element={<NotFound />} />*/}
-    </Routes>
-  );
+    return (
+        <Routes>
+            <Route path="/" element={<Home />} />
+
+            <Route path="/shop" element={<Shop />} />
+
+            <Route path="/ProductDetails" element={<ProductDetails />} />
+
+            <Route path="/cart" element={<Cart />} />
+
+            <Route
+                path="/checkout"
+                element={
+                    <ProtectedRoute>
+                        <Checkout />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route path="/login" element={<Login />} />
+
+            <Route path="/register" element={<Register />} />
+
+            <Route
+                path="/account"
+                element={
+                    <ProtectedRoute>
+                        <Account />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route path="/about" element={<About />} />
+
+            <Route path="/contact" element={<Contact />} />
+        </Routes>
+    );
 }
 
 export default AppRoutes;

@@ -1,16 +1,79 @@
+import { useState, useEffect } from "react";
 import Layout from "../../components/layout/Layout";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 import {
   FiUser,
   FiMail,
+  FiPhone,
   FiLock,
   FiEye,
+  FiEyeOff,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 
 export default function Register() {
+  const navigate = useNavigate();
+
+  const { register, user, loading } = useAuth();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
+
+  const [error, setError] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/account");
+    }
+  }, [user, loading, navigate]);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    // basic frontend validation
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+
+      await register(formData);
+
+      navigate("/account");
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          "Registration failed."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Layout>
       <>
@@ -192,77 +255,165 @@ export default function Register() {
           <div className="overlay"></div>
 
           <div className="register-card">
-            <h2>
-              Welcome to
-              <br />
-              <span>Flora</span>
-            </h2>
+            <form onSubmit={handleSubmit}>
+              <h2>
+                Welcome to
+                <br />
+                <span>Flora</span>
+              </h2>
 
-            <p className="subtitle">
-              Create your floral account.
-            </p>
+              <p className="subtitle">
+                Create your floral account.
+              </p>
 
-            {/* Full Name */}
-            <label>Full Name</label>
+              {/* First Name */}
+              <label>First Name</label>
+              <div className="input-box">
+                <FiUser />
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="John"
+                  required
+                />
+              </div>
 
-            <div className="input-box">
-              <FiUser />
-              <input
-                type="text"
-                placeholder="John Doe"
-              />
-            </div>
+              {/* Last Name */}
+              <label>Last Name</label>
+              <div className="input-box">
+                <FiUser />
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="Doe"
+                  required
+                />
+              </div>
 
-            {/* Email */}
-            <label>Email Address</label>
+              {/* Phone */}
+              <label>Phone Number</label>
+              <div className="input-box">
+                <FiPhone />
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="0771234567"
+                  required
+                />
+              </div>
 
-            <div className="input-box">
-              <FiMail />
-              <input
-                type="email"
-                placeholder="flower@poetry.com"
-              />
-            </div>
+              {/* Email */}
+              <label>Email Address</label>
+              <div className="input-box">
+                <FiMail />
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="flower@poetry.com"
+                  required
+                />
+              </div>
 
-            {/* Password */}
-            <label>Password</label>
+              {/* Password */}
+              <label>Password</label>
+              <div className="input-box">
+                <FiLock />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                />
 
-            <div className="input-box">
-              <FiLock />
-              <input
-                type="password"
-                placeholder="••••••••"
-              />
-              <FiEye className="eye" />
-            </div>
+                {showPassword ? (
+                  <FiEyeOff
+                    className="eye"
+                    onClick={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <FiEye
+                    className="eye"
+                    onClick={() => setShowPassword(true)}
+                  />
+                )}
+              </div>
 
-            {/* Confirm Password */}
-            <label>Confirm Password</label>
+              {/* Confirm Password */}
+              <label>Confirm Password</label>
+              <div className="input-box">
+                <FiLock />
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                />
 
-            <div className="input-box">
-              <FiLock />
-              <input
-                type="password"
-                placeholder="••••••••"
-              />
-              <FiEye className="eye" />
-            </div>
+                {showConfirmPassword ? (
+                  <FiEyeOff
+                    className="eye"
+                    onClick={() =>
+                      setShowConfirmPassword(false)
+                    }
+                  />
+                ) : (
+                  <FiEye
+                    className="eye"
+                    onClick={() =>
+                      setShowConfirmPassword(true)
+                    }
+                  />
+                )}
+              </div>
 
-            <button className="signup-btn">
-              SIGN UP
-            </button>
+              {/* Error */}
+              {error && (
+                <p
+                  style={{
+                    color: "red",
+                    textAlign: "center",
+                    marginBottom: "15px",
+                  }}
+                >
+                  {error}
+                </p>
+              )}
 
-            <button className="google-btn">
-              <FcGoogle />
-              SIGN UP WITH GOOGLE
-            </button>
+              {/* Submit */}
+              <button
+                className="signup-btn"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting
+                  ? "Creating Account..."
+                  : "SIGN UP"}
+              </button>
 
-            <div className="login">
-              Already have an account?
-              <Link to="/Login">
-            <span>Sign In</span>
-          </Link>
-            </div>
+              <button className="google-btn">
+                <FcGoogle />
+                SIGN UP WITH GOOGLE
+              </button>
+
+              <div className="login">
+                Already have an account?
+                <Link to="/Login">
+                  <span>Sign In</span>
+                </Link>
+              </div>
+            </form>
           </div>
         </div>
       </>

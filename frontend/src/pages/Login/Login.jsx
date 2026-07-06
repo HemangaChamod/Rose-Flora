@@ -1,20 +1,64 @@
+import { useState, useEffect } from "react";
 import Layout from "../../components/layout/Layout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 import {
   FiMail,
   FiLock,
   FiEye,
+  FiEyeOff,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 
 export default function Login() {
+  const navigate = useNavigate();
+  const { login, user, loading } = useAuth();
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/account");
+    }
+  }, [user, loading, navigate]);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      setIsSubmitting(true);
+      await login(formData);
+      navigate("/account");
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || "Login failed."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Layout>
-
-    <>
-
-    <style>{`
+      <>
+        <style>{`
 
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
@@ -262,71 +306,104 @@ display:none;
 
 }
         
-      `}</style>
-      
-    <div className="login-page">
-      <div className="overlay"></div>
+        `}</style>
 
-      <div className="login-card">
+        <div className="login-page">
+          <div className="overlay"></div>
 
-        <h2>
-          Welcome Back,
-          <br />
-          <span>Flora</span>
-        </h2>
+          <div className="login-card">
+            <form onSubmit={handleSubmit}>
+              <h2>
+                Welcome Back,
+                <br />
+                <span>Flora</span>
+              </h2>
 
-        <p className="subtitle">
-          Continue your floral journey.
-        </p>
+              <p className="subtitle">
+                Continue your floral journey.
+              </p>
 
-        {/* Email */}
+              {/* Email */}
+              <label>Email Address</label>
 
-        <label>Email Address</label>
+              <div className="input-box">
+                <FiMail />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="flower@poetry.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-        <div className="input-box">
-          <FiMail />
-          <input
-            type="email"
-            placeholder="flower@poetry.com"
-          />
+              {/* Password */}
+              <label>Password</label>
+
+              <div className="input-box">
+                <FiLock />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+
+                {showPassword ? (
+                  <FiEyeOff
+                    className="eye"
+                    onClick={() => setShowPassword(false)}
+                  />
+                ) : (
+                  <FiEye
+                    className="eye"
+                    onClick={() => setShowPassword(true)}
+                  />
+                )}
+              </div>
+
+              <div className="forgot">
+                Forgot Password?
+              </div>
+
+              {error && (
+                <p
+                  style={{
+                    color: "red",
+                    marginBottom: "15px",
+                    textAlign: "center",
+                  }}
+                >
+                  {error}
+                </p>
+              )}
+
+              <button
+                className="signin-btn"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Signing In..." : "SIGN IN"}
+              </button>
+
+              <button className="google-btn">
+                <FcGoogle />
+                SIGN IN WITH GOOGLE
+              </button>
+
+              <div className="register">
+                Don't have an account?
+                <Link to="/register">
+                  <span>Create an Account</span>
+                </Link>
+              </div>
+            </form>
+          </div>
         </div>
-
-        {/* Password */}
-
-        <label>Password</label>
-
-        <div className="input-box">
-          <FiLock />
-          <input
-            type="password"
-            placeholder="••••••••"
-          />
-
-          <FiEye className="eye" />
-        </div>
-
-        <div className="forgot">
-          Forgot Password?
-        </div>
-
-        <button className="signin-btn">
-          SIGN IN
-        </button>
-
-        <button className="google-btn">
-          <FcGoogle />
-          SIGN IN WITH GOOGLE
-        </button>
-
-        <div className="register">
-          Don't have an account?
-          <Link to="/register">
-            <span>Create an Account</span>
-          </Link>
-        </div>
-      </div>
-    </div>
-    </>
+      </>
     </Layout>
   );
 }
