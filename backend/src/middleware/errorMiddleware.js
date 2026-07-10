@@ -1,17 +1,12 @@
-const errorMiddleware = (
-    err,
-    req,
-    res,
-    next
-) => {
-
+const errorMiddleware = (err, req, res, next) => {
+    console.error("========== ERROR ==========");
     console.error(err);
+    console.error("===========================");
 
-    res.status(500).json({
+    res.status(err.status || 500).json({
         success: false,
-        message:
-            err.message ||
-            "Internal Server Error",
+        message: err.message,
+        stack: err.stack,
     });
 };
 

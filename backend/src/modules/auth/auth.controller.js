@@ -2,6 +2,8 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import {
     registerCustomer,
     loginCustomer,
+    loginAdmin,
+    getAdminById,
 } from "./auth.service.js";
 
 import { generateToken } from "../../utils/jwt.js";
@@ -48,6 +50,59 @@ export const login = asyncHandler(async (req, res) => {
         "Login successful.",
         customer
     );
+});
+
+export const adminLogin = asyncHandler(async (req, res) => {
+
+    const admin = await loginAdmin(req.body);
+
+    const token = generateToken(admin.id);
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.cookie("adminToken", token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+
+    return successResponse(
+        res,
+        "Admin login successful.",
+        admin
+    );
+
+});
+
+export const getCurrentAdmin = asyncHandler(async (req, res) => {
+
+    const admin = await getAdminById(req.admin.id);
+
+    return successResponse(
+        res,
+        "Admin retrieved successfully.",
+        admin
+    );
+
+});
+
+export const adminLogout = asyncHandler(async (req, res) => {
+
+    res.clearCookie("adminToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite:
+            process.env.NODE_ENV === "production"
+                ? "none"
+                : "lax",
+    });
+
+    return successResponse(
+        res,
+        "Admin logout successful."
+    );
+
 });
 
 export const getCurrentUser = asyncHandler(

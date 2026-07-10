@@ -111,6 +111,8 @@ model ProductImage {
 
   imageUrl String
 
+  publicId String
+
   isMain Boolean @default(false)
 
   displayOrder Int @default(1)
