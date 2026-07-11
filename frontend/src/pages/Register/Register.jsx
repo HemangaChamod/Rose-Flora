@@ -1,30 +1,39 @@
-import { useState, useEffect } from "react";
-import Layout from "../../components/layout/Layout";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
-  FiUser,
-  FiMail,
-  FiPhone,
-  FiLock,
+  FiArrowRight,
   FiEye,
   FiEyeOff,
+  FiLock,
+  FiMail,
+  FiPhone,
+  FiUser,
 } from "react-icons/fi";
-import { FcGoogle } from "react-icons/fc";
+
+import Layout from "../../components/layout/Layout";
+import { useAuth } from "../../hooks/useAuth";
+
 
 export default function Register() {
   const navigate = useNavigate();
 
-  const { register, user, loading } = useAuth();
+  const {
+    register,
+    user,
+    loading,
+  } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState(false);
+
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
 
   const [error, setError] = useState("");
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -35,24 +44,48 @@ export default function Register() {
     confirmPassword: "",
   });
 
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, []);
+
+
   useEffect(() => {
     if (!loading && user) {
       navigate("/account");
     }
   }, [user, loading, navigate]);
 
+
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
+    setFormData((currentData) => ({
+      ...currentData,
       [e.target.name]: e.target.value,
     }));
+
+    if (error) {
+      setError("");
+    }
   };
+
+
+  const handleLoginNavigation = () => {
+    setIsLeaving(true);
+
+    setTimeout(() => {
+      navigate("/Login");
+    }, 420);
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError("");
 
-    // basic frontend validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -67,355 +100,772 @@ export default function Register() {
     } catch (err) {
       setError(
         err?.response?.data?.message ||
-          "Registration failed."
+          "Unable to create your account."
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+
   return (
     <Layout>
       <>
-        <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        <style>
+          {`
+            .lassana-register-page,
+            .lassana-register-page * {
+              box-sizing: border-box;
+            }
 
-        *{
-          margin:0;
-          padding:0;
-          box-sizing:border-box;
-        }
+            .lassana-register-page {
+              min-height: 820px;
+              display: flex;
+              align-items: stretch;
+              overflow: hidden;
+              background: #ffffff;
+              animation: lassanaRegisterEnter 0.7s cubic-bezier(.22, 1, .36, 1);
+            }
 
-        .register-page{
-          width:100%;
-          min-height:calc(100vh - 220px);
-          display:flex;
-          justify-content:center;
-          align-items:center;
-          position:relative;
-          overflow:hidden;
-          font-family:'Inter',sans-serif;
-          background:url("img/bg/login-bg.png") center/cover no-repeat;
-          padding:30px 20px;
-        }
+            .lassana-register-page.is-leaving {
+              animation: lassanaRegisterLeave 0.42s ease forwards;
+              pointer-events: none;
+            }
 
-        .overlay{
-          position:absolute;
-          inset:0;
-          background:rgba(255,255,255,.15);
-        }
+            @keyframes lassanaRegisterEnter {
+              from {
+                opacity: 0;
+                transform: translateY(18px);
+              }
 
-        .register-card{
-          position:relative;
-          z-index:2;
-          width:540px;
-          background:rgba(255,255,255,.97);
-          border-radius:14px;
-          padding:50px;
-          margin:40px auto;
-          box-shadow:0 25px 60px rgba(0,0,0,.18);
-        }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
 
-        .register-card h2{
-          font-family:'Cormorant Garamond',serif;
-          font-size:52px;
-          font-weight:500;
-          text-align:center;
-          line-height:1.1;
-          color:#222;
-        }
+            @keyframes lassanaRegisterLeave {
+              from {
+                opacity: 1;
+                transform: translateY(0);
+              }
 
-        .register-card h2 span{
-          color:#4d2b8a;
-        }
+              to {
+                opacity: 0;
+                transform: translateY(-12px);
+              }
+            }
 
-        .subtitle{
-          font-family:'Cormorant Garamond',serif;
-          font-size:28px;
-          font-style:italic;
-          text-align:center;
-          margin:15px 0 35px;
-          color:#666;
-        }
 
-        label{
-          display:block;
-          margin-bottom:10px;
-          font-size:13px;
-          font-weight:700;
-          letter-spacing:3px;
-          text-transform:uppercase;
-          color:#4d2b8a;
-        }
+            /* VISUAL */
 
-        .input-box{
-          display:flex;
-          align-items:center;
-          height:58px;
-          border:1px solid #ddd;
-          border-radius:5px;
-          padding:0 18px;
-          margin-bottom:22px;
-          background:#fff;
-        }
+            .lassana-register-visual {
+              width: 45%;
+              min-height: 820px;
+              position: relative;
+              overflow: hidden;
+              background:
+                url("/img/bg/login-bg.png")
+                center center / cover no-repeat;
+              animation: lassanaRegisterVisualEnter
+                0.9s cubic-bezier(.22, 1, .36, 1);
+            }
 
-        .input-box svg{
-          font-size:20px;
-          color:#888;
-        }
+            @keyframes lassanaRegisterVisualEnter {
+              from {
+                opacity: 0;
+                transform: translateX(-40px) scale(1.03);
+              }
 
-        .input-box input{
-          flex:1;
-          margin-left:15px;
-          border:none;
-          outline:none;
-          font-size:16px;
-          background:transparent;
-        }
+              to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+              }
+            }
 
-        .eye{
-          cursor:pointer;
-        }
+            .lassana-register-visual::after {
+              content: "";
+              position: absolute;
+              inset: 0;
+              background:
+                linear-gradient(
+                  180deg,
+                  rgba(20, 10, 15, 0.04) 0%,
+                  rgba(20, 10, 15, 0.6) 100%
+                );
+            }
 
-        .signup-btn{
-          width:100%;
-          height:58px;
-          border:none;
-          border-radius:5px;
-          background:#4d2b8a;
-          color:#fff;
-          font-size:18px;
-          letter-spacing:5px;
-          cursor:pointer;
-          transition:.3s;
-          margin-top:8px;
-        }
+            .lassana-register-visual-content {
+              position: absolute;
+              left: 60px;
+              right: 60px;
+              top: 50%;
+              z-index: 2;
+              transform: translateY(-50%);
+            }
 
-        .signup-btn:hover{
-          background:#40206f;
-        }
+            .lassana-register-visual-label {
+              display: inline-block;
+              margin-bottom: 18px;
+              color: #ffffff;
+              font-size: 12px;
+              font-weight: 600;
+              letter-spacing: 2.5px;
+              text-transform: uppercase;
+            }
 
-        .google-btn{
-          margin-top:18px;
-          width:100%;
-          height:58px;
-          background:#fff;
-          border:1px solid #ccc;
-          border-radius:5px;
-          display:flex;
-          justify-content:center;
-          align-items:center;
-          gap:15px;
-          font-size:17px;
-          letter-spacing:3px;
-          cursor:pointer;
-        }
+            .lassana-register-visual-content h2 {
+              max-width: 500px;
+              margin: 0 0 18px;
+              color: #ffffff;
+              font-size: 44px;
+              font-weight: 500;
+              line-height: 1.2;
+            }
 
-        .google-btn svg{
-          font-size:22px;
-        }
+            .lassana-register-visual-content p {
+              max-width: 460px;
+              margin: 0;
+              color: rgba(255, 255, 255, 0.88);
+              font-size: 15px;
+              line-height: 1.8;
+            }
 
-        .login{
-          margin-top:28px;
-          text-align:center;
-          font-size:17px;
-          color:#444;
-        }
 
-        .login span{
-          margin-left:8px;
-          font-weight:600;
-          color:#4d2b8a;
-          cursor:pointer;
-        }
+            /* FORM */
 
-        @media(max-width:768px){
+            .lassana-register-form-side {
+              width: 55%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              padding: 65px 50px;
+              animation: lassanaRegisterFormEnter
+                0.85s cubic-bezier(.22, 1, .36, 1);
+            }
 
-          .register-page{
-            padding:40px 15px;
-          }
+            @keyframes lassanaRegisterFormEnter {
+              from {
+                opacity: 0;
+                transform: translateX(35px);
+              }
 
-          .register-card{
-            width:100%;
-            padding:35px 25px;
-          }
+              to {
+                opacity: 1;
+                transform: translateX(0);
+              }
+            }
 
-          .register-card h2{
-            font-size:42px;
-          }
+            .lassana-register-wrapper {
+              width: 100%;
+              max-width: 610px;
+            }
 
-          .subtitle{
-            font-size:24px;
-          }
+            .lassana-register-small-title {
+              margin-bottom: 12px;
+              color: #ef5b78;
+              font-size: 12px;
+              font-weight: 600;
+              letter-spacing: 2.5px;
+              text-transform: uppercase;
+            }
 
-        }
-        `}</style>
+            .lassana-register-title {
+              margin: 0 0 12px;
+              color: #222222;
+              font-size: 40px;
+              font-weight: 600;
+              line-height: 1.2;
+            }
 
-        <div className="register-page">
-          <div className="overlay"></div>
+            .lassana-register-description {
+              margin: 0 0 35px;
+              color: #777777;
+              font-size: 15px;
+              line-height: 1.7;
+            }
 
-          <div className="register-card">
-            <form onSubmit={handleSubmit}>
+
+            /* FIELDS */
+
+            .lassana-register-field {
+              margin-bottom: 20px;
+            }
+
+            .lassana-register-label {
+              display: block;
+              position: static !important;
+              margin: 0 0 8px !important;
+              padding: 0 !important;
+              color: #333333;
+              font-size: 13px;
+              font-weight: 600;
+              line-height: 1.4;
+              transform: none !important;
+            }
+
+            .lassana-register-input-wrapper {
+              width: 100%;
+              height: 56px;
+              display: flex;
+              align-items: center;
+              position: relative;
+              padding: 0 17px;
+              border: 1px solid #e5e5e5;
+              background: #fafafa;
+              transition:
+                border-color 0.3s ease,
+                background 0.3s ease,
+                box-shadow 0.3s ease;
+            }
+
+            .lassana-register-input-wrapper:focus-within {
+              border-color: #ef5b78;
+              background: #ffffff;
+              box-shadow: 0 0 0 3px rgba(239, 91, 120, 0.08);
+            }
+
+            .lassana-register-field-icon {
+              width: 19px;
+              min-width: 19px;
+              height: 19px;
+              color: #999999;
+            }
+
+
+            /* IMPORTANT INPUT RESET */
+
+            .lassana-register-page .lassana-register-input {
+              flex: 1 !important;
+              width: 100% !important;
+              height: 54px !important;
+              min-height: 54px !important;
+
+              position: static !important;
+              top: auto !important;
+              left: auto !important;
+
+              display: block !important;
+
+              margin: 0 !important;
+              padding: 0 13px !important;
+
+              border: 0 !important;
+              outline: 0 !important;
+
+              background: transparent !important;
+              box-shadow: none !important;
+
+              color: #333333 !important;
+
+              font-family: inherit !important;
+              font-size: 14px !important;
+              font-weight: 400 !important;
+              font-style: normal !important;
+
+              line-height: normal !important;
+              letter-spacing: normal !important;
+
+              text-indent: 0 !important;
+              text-transform: none !important;
+
+              transform: none !important;
+
+              appearance: none !important;
+              -webkit-appearance: none !important;
+            }
+
+            .lassana-register-page
+            .lassana-register-input::placeholder {
+              position: static !important;
+              color: #aaaaaa !important;
+              opacity: 1 !important;
+              font-size: 14px !important;
+              font-weight: 400 !important;
+              line-height: normal !important;
+              transform: none !important;
+            }
+
+            .lassana-register-page .lassana-register-input:focus {
+              border: 0 !important;
+              outline: 0 !important;
+              box-shadow: none !important;
+            }
+
+            .lassana-register-page
+            .lassana-register-input:-webkit-autofill,
+            .lassana-register-page
+            .lassana-register-input:-webkit-autofill:hover,
+            .lassana-register-page
+            .lassana-register-input:-webkit-autofill:focus {
+              -webkit-text-fill-color: #333333 !important;
+              -webkit-box-shadow:
+                0 0 0 1000px transparent inset !important;
+              transition:
+                background-color 9999s ease-in-out 0s;
+            }
+
+
+            /* EYE */
+
+            .lassana-register-eye {
+              width: 35px;
+              height: 35px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              flex-shrink: 0;
+              margin: 0 !important;
+              padding: 0 !important;
+              border: 0 !important;
+              outline: 0 !important;
+              background: transparent !important;
+              box-shadow: none !important;
+              color: #888888;
+              font-size: 18px;
+              cursor: pointer;
+            }
+
+            .lassana-register-eye:hover {
+              color: #ef5b78;
+            }
+
+
+            /* ERROR */
+
+            .lassana-register-error {
+              margin-bottom: 20px;
+              padding: 13px 16px;
+              border-left: 3px solid #dc3545;
+              background: #fff4f5;
+              color: #c73746;
+              font-size: 13px;
+              line-height: 1.6;
+            }
+
+
+            /* BUTTON */
+
+            .lassana-register-button {
+              width: 100%;
+              height: 58px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 12px;
+              margin: 5px 0 0 !important;
+              padding: 0 25px !important;
+              border: none !important;
+              background: #ef5b78;
+              color: #ffffff;
+              font-size: 14px;
+              font-weight: 600;
+              letter-spacing: 0.5px;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            }
+
+            .lassana-register-button:hover:not(:disabled) {
+              background: #df4967;
+              transform: translateY(-2px);
+              box-shadow: 0 12px 28px rgba(239, 91, 120, 0.25);
+            }
+
+            .lassana-register-button:disabled {
+              opacity: 0.7;
+              cursor: not-allowed;
+            }
+
+
+            /* LOGIN */
+
+            .lassana-register-login {
+              margin-top: 28px;
+              padding-top: 24px;
+              border-top: 1px solid #eeeeee;
+              text-align: center;
+              color: #777777;
+              font-size: 14px;
+            }
+
+            .lassana-register-link-button {
+              margin: 0 0 0 6px !important;
+              padding: 0 !important;
+              border: 0 !important;
+              outline: 0 !important;
+              background: transparent !important;
+              color: #ef5b78;
+              font-size: 14px;
+              font-weight: 600;
+              cursor: pointer;
+              transition: color 0.3s ease;
+            }
+
+            .lassana-register-link-button:hover {
+              color: #df4967;
+            }
+
+
+            @media (max-width: 991.98px) {
+              .lassana-register-visual {
+                width: 38%;
+              }
+
+              .lassana-register-form-side {
+                width: 62%;
+                padding: 55px 30px;
+              }
+
+              .lassana-register-visual-content {
+                left: 35px;
+                right: 35px;
+              }
+
+              .lassana-register-visual-content h2 {
+                font-size: 34px;
+              }
+            }
+
+
+            @media (max-width: 767.98px) {
+              .lassana-register-page {
+                display: block;
+                min-height: auto;
+              }
+
+              .lassana-register-visual {
+                width: 100%;
+                min-height: 300px;
+              }
+
+              .lassana-register-visual-content {
+                left: 25px;
+                right: 25px;
+              }
+
+              .lassana-register-visual-content h2 {
+                font-size: 30px;
+                margin-bottom: 10px;
+              }
+
+              .lassana-register-visual-content p {
+                font-size: 13px;
+                line-height: 1.6;
+              }
+
+              .lassana-register-form-side {
+                width: 100%;
+                padding: 50px 22px 65px;
+              }
+
+              .lassana-register-title {
+                font-size: 32px;
+              }
+            }
+
+
+            @media (prefers-reduced-motion: reduce) {
+              .lassana-register-page,
+              .lassana-register-visual,
+              .lassana-register-form-side {
+                animation: none !important;
+              }
+            }
+          `}
+        </style>
+
+
+        <main
+          className={`lassana-register-page ${
+            isLeaving ? "is-leaving" : ""
+          }`}
+        >
+          {/* VISUAL */}
+
+          <section className="lassana-register-visual">
+            <div className="lassana-register-visual-content">
+              <span className="lassana-register-visual-label">
+                Join Lassana Flora
+              </span>
+
               <h2>
-                Welcome to
-                <br />
-                <span>Flora</span>
+                Make every special moment bloom.
               </h2>
 
-              <p className="subtitle">
-                Create your floral account.
+              <p>
+                Create your account to enjoy a smoother shopping
+                experience and easily manage your flower orders.
+              </p>
+            </div>
+          </section>
+
+
+          {/* FORM */}
+
+          <section className="lassana-register-form-side">
+            <div className="lassana-register-wrapper">
+              <div className="lassana-register-small-title">
+                Create Account
+              </div>
+
+              <h1 className="lassana-register-title">
+                Join Lassana Flora today
+              </h1>
+
+              <p className="lassana-register-description">
+                Enter your details below to create your customer account.
               </p>
 
-              {/* First Name */}
-              <label>First Name</label>
-              <div className="input-box">
-                <FiUser />
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="John"
-                  required
-                />
-              </div>
 
-              {/* Last Name */}
-              <label>Last Name</label>
-              <div className="input-box">
-                <FiUser />
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Doe"
-                  required
-                />
-              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="lassana-register-field">
+                      <label
+                        className="lassana-register-label"
+                        htmlFor="register-first-name"
+                      >
+                        First Name
+                      </label>
 
-              {/* Phone */}
-              <label>Phone Number</label>
-              <div className="input-box">
-                <FiPhone />
-                <input
-                  type="text"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="0771234567"
-                  required
-                />
-              </div>
+                      <div className="lassana-register-input-wrapper">
+                        <FiUser className="lassana-register-field-icon" />
 
-              {/* Email */}
-              <label>Email Address</label>
-              <div className="input-box">
-                <FiMail />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="flower@poetry.com"
-                  required
-                />
-              </div>
+                        <input
+                          id="register-first-name"
+                          type="text"
+                          name="firstName"
+                          className="lassana-register-input"
+                          placeholder="First name"
+                          value={formData.firstName}
+                          onChange={handleChange}
+                          autoComplete="given-name"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-              {/* Password */}
-              <label>Password</label>
-              <div className="input-box">
-                <FiLock />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  required
-                />
 
-                {showPassword ? (
-                  <FiEyeOff
-                    className="eye"
-                    onClick={() => setShowPassword(false)}
-                  />
-                ) : (
-                  <FiEye
-                    className="eye"
-                    onClick={() => setShowPassword(true)}
-                  />
+                  <div className="col-md-6">
+                    <div className="lassana-register-field">
+                      <label
+                        className="lassana-register-label"
+                        htmlFor="register-last-name"
+                      >
+                        Last Name
+                      </label>
+
+                      <div className="lassana-register-input-wrapper">
+                        <FiUser className="lassana-register-field-icon" />
+
+                        <input
+                          id="register-last-name"
+                          type="text"
+                          name="lastName"
+                          className="lassana-register-input"
+                          placeholder="Last name"
+                          value={formData.lastName}
+                          onChange={handleChange}
+                          autoComplete="family-name"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div className="col-md-6">
+                    <div className="lassana-register-field">
+                      <label
+                        className="lassana-register-label"
+                        htmlFor="register-phone"
+                      >
+                        Phone Number
+                      </label>
+
+                      <div className="lassana-register-input-wrapper">
+                        <FiPhone className="lassana-register-field-icon" />
+
+                        <input
+                          id="register-phone"
+                          type="tel"
+                          name="phone"
+                          className="lassana-register-input"
+                          placeholder="07X XXX XXXX"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          autoComplete="tel"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div className="col-md-6">
+                    <div className="lassana-register-field">
+                      <label
+                        className="lassana-register-label"
+                        htmlFor="register-email"
+                      >
+                        Email Address
+                      </label>
+
+                      <div className="lassana-register-input-wrapper">
+                        <FiMail className="lassana-register-field-icon" />
+
+                        <input
+                          id="register-email"
+                          type="email"
+                          name="email"
+                          className="lassana-register-input"
+                          placeholder="Enter your email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          autoComplete="email"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div className="col-md-6">
+                    <div className="lassana-register-field">
+                      <label
+                        className="lassana-register-label"
+                        htmlFor="register-password"
+                      >
+                        Password
+                      </label>
+
+                      <div className="lassana-register-input-wrapper">
+                        <FiLock className="lassana-register-field-icon" />
+
+                        <input
+                          id="register-password"
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          className="lassana-register-input"
+                          placeholder="Create password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          autoComplete="new-password"
+                          required
+                        />
+
+                        <button
+                          type="button"
+                          className="lassana-register-eye"
+                          onClick={() =>
+                            setShowPassword((current) => !current)
+                          }
+                          aria-label={
+                            showPassword
+                              ? "Hide password"
+                              : "Show password"
+                          }
+                        >
+                          {showPassword ? <FiEyeOff /> : <FiEye />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div className="col-md-6">
+                    <div className="lassana-register-field">
+                      <label
+                        className="lassana-register-label"
+                        htmlFor="register-confirm-password"
+                      >
+                        Confirm Password
+                      </label>
+
+                      <div className="lassana-register-input-wrapper">
+                        <FiLock className="lassana-register-field-icon" />
+
+                        <input
+                          id="register-confirm-password"
+                          type={
+                            showConfirmPassword
+                              ? "text"
+                              : "password"
+                          }
+                          name="confirmPassword"
+                          className="lassana-register-input"
+                          placeholder="Confirm password"
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
+                          autoComplete="new-password"
+                          required
+                        />
+
+                        <button
+                          type="button"
+                          className="lassana-register-eye"
+                          onClick={() =>
+                            setShowConfirmPassword(
+                              (current) => !current
+                            )
+                          }
+                          aria-label={
+                            showConfirmPassword
+                              ? "Hide password"
+                              : "Show password"
+                          }
+                        >
+                          {showConfirmPassword ? (
+                            <FiEyeOff />
+                          ) : (
+                            <FiEye />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                {error && (
+                  <div className="lassana-register-error">
+                    {error}
+                  </div>
                 )}
-              </div>
 
-              {/* Confirm Password */}
-              <label>Confirm Password</label>
-              <div className="input-box">
-                <FiLock />
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  required
-                />
 
-                {showConfirmPassword ? (
-                  <FiEyeOff
-                    className="eye"
-                    onClick={() =>
-                      setShowConfirmPassword(false)
-                    }
-                  />
-                ) : (
-                  <FiEye
-                    className="eye"
-                    onClick={() =>
-                      setShowConfirmPassword(true)
-                    }
-                  />
-                )}
-              </div>
-
-              {/* Error */}
-              {error && (
-                <p
-                  style={{
-                    color: "red",
-                    textAlign: "center",
-                    marginBottom: "15px",
-                  }}
+                <button
+                  type="submit"
+                  className="lassana-register-button"
+                  disabled={isSubmitting}
                 >
-                  {error}
-                </p>
-              )}
+                  {isSubmitting ? (
+                    "Creating account..."
+                  ) : (
+                    <>
+                      Create Account
+                      <FiArrowRight />
+                    </>
+                  )}
+                </button>
 
-              {/* Submit */}
-              <button
-                className="signup-btn"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                {isSubmitting
-                  ? "Creating Account..."
-                  : "SIGN UP"}
-              </button>
 
-              <button className="google-btn">
-                <FcGoogle />
-                SIGN UP WITH GOOGLE
-              </button>
+                <div className="lassana-register-login">
+                  Already have an account?
 
-              <div className="login">
-                Already have an account?
-                <Link to="/Login">
-                  <span>Sign In</span>
-                </Link>
-              </div>
-            </form>
-          </div>
-        </div>
+                  <button
+                    type="button"
+                    className="lassana-register-link-button"
+                    onClick={handleLoginNavigation}
+                  >
+                    Sign in
+                  </button>
+                </div>
+              </form>
+            </div>
+          </section>
+        </main>
       </>
     </Layout>
   );
