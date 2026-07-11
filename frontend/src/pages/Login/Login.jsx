@@ -331,7 +331,7 @@ display:none;
                 <input
                   type="email"
                   name="email"
-                  placeholder="flower@poetry.com"
+                  
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -346,7 +346,7 @@ display:none;
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  placeholder="••••••••"
+                  
                   value={formData.password}
                   onChange={handleChange}
                   required

@@ -10,23 +10,20 @@ function Footer() {
         <div className="row">
           <div className="col-xl-2 col-md-6 col-sm-6 col-12">
             <div className="footer-widget footer-menu-widget clearfix">
-              <h4 className="footer-title">My Accoout</h4>
+              <h4 className="footer-title">Site Pages</h4>
               <div className="footer-menu">
                 <ul>
                   <li>
                     <a href="/Account">My account</a>
                   </li>
                   <li>
-                    <a href="checkout.html">Checkout</a>
+                    <a href="/Contact">Contact us</a>
                   </li>
                   <li>
-                    <a href="contact.html">Contact us</a>
+                    <a href="/Cart">Shopping Cart</a>
                   </li>
                   <li>
-                    <a href="cart.html">Shopping Cart</a>
-                  </li>
-                  <li>
-                    <a href="wishlist.html">Wishlist</a>
+                    <a href="/Wishlist">Wishlist</a>
                   </li>
                 </ul>
               </div>
@@ -38,19 +35,13 @@ function Footer() {
               <div className="footer-menu">
                 <ul>
                   <li>
-                    <a href="locations.html">Store Location</a>
+                    <a href="">Store Location</a>
                   </li>
                   <li>
-                    <a href="order-tracking.html">Orders Tracking</a>
+                    <a href="">Orders Tracking</a>
                   </li>
                   <li>
-                    <a href="product-details.html">Size Guide</a>
-                  </li>
-                  <li>
-                    <a href="account.html">My account</a>
-                  </li>
-                  <li>
-                    <a href="faq.html">FAQs</a>
+                    <a href="">FAQs</a>
                   </li>
                 </ul>
               </div>
@@ -62,19 +53,16 @@ function Footer() {
               <div className="footer-menu">
                 <ul>
                   <li>
-                    <a href="contact.html">Privacy Page</a>
+                    <a href="">Privacy Page</a>
                   </li>
                   <li>
-                    <a href="about.html">About us</a>
+                    <a href="/About">About us</a>
                   </li>
                   <li>
-                    <a href="contact.html">Careers</a>
+                    <a href="">Careers</a>
                   </li>
                   <li>
-                    <a href="faq.html">Delivery Inforamtion</a>
-                  </li>
-                  <li>
-                    <a href="contact.html">Term &amp; Conditions</a>
+                    <a href="">Term &amp; Conditions</a>
                   </li>
                 </ul>
               </div>
@@ -86,20 +74,15 @@ function Footer() {
               <div className="footer-menu">
                 <ul>
                   <li>
-                    <a href="product-details.html">Shipping Policy</a>
+                    <a href="">Shipping Policy</a>
                   </li>
                   <li>
-                    <a href="contact.html">Help &amp; Contact Us</a>
+                    <a href="/Contact">Help &amp; Contact Us</a>
                   </li>
                   <li>
-                    <a href="account.html">Returns &amp; Refunds</a>
+                    <a href="">Returns &amp; Refunds</a>
                   </li>
-                  <li>
-                    <a href="shop.html">Online Stores</a>
-                  </li>
-                  <li>
-                    <a href="contact.html">Terms and Conditions</a>
-                  </li>
+                 
                 </ul>
               </div>
             </div>
@@ -113,8 +96,7 @@ function Footer() {
                 </div>
               </div>
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-                eiusmo incididunt ut labore et dolore
+                Fresh flowers and beautiful arrangements made to bring joy, love, and happiness to every special moment.
               </p>
               <div className="footer-address">
                 <ul>
@@ -123,7 +105,7 @@ function Footer() {
                       <i className="icon-location-pin" />
                     </div>
                     <div className="footer-address-info">
-                      <p>Brooklyn, New York, United States</p>
+                      <p>Colombo, Sri Lanka</p>
                     </div>
                   </li>
                   <li>
@@ -132,7 +114,7 @@ function Footer() {
                     </div>
                     <div className="footer-address-info">
                       <p>
-                        <a href="tel:+0123-456789">+0123-456789</a>
+                        <a href="">+94 74 287 0823</a>
                       </p>
                     </div>
                   </li>
@@ -142,8 +124,8 @@ function Footer() {
                     </div>
                     <div className="footer-address-info">
                       <p>
-                        <a href="mailto:example@example.com">
-                          example@example.com
+                        <a href="">
+                          contact@lassanflora.com
                         </a>
                       </p>
                     </div>
@@ -187,9 +169,9 @@ function Footer() {
         <div className="row">
           <div className="col-md-6 col-12">
             <div className="footer-copyright-left">
-              <div className="ltn__copyright-design clearfix">
+              <div className="ltn__copyright-design clearfix ">
                 <p>
-                  © <span className="current-year" /> - Just For You
+                  © <span className="current-year" /> Lassana Flora. All rights reserved. Design & Developed by Codilent IT Solutions
                 </p>
               </div>
             </div>

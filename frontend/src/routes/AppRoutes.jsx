@@ -10,6 +10,7 @@ import Register from "../pages/Register/Register";
 import Account from "../pages/Account/Account";
 import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
+import Wishlist from "../pages/Wishlist/Wishlist";
 
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -20,7 +21,10 @@ function AppRoutes() {
 
             <Route path="/shop" element={<Shop />} />
 
-            <Route path="/ProductDetails" element={<ProductDetails />} />
+            <Route
+                path="/ProductDetails/:id"
+                element={<ProductDetails />}
+            />
 
             <Route path="/cart" element={<Cart />} />
 
@@ -49,6 +53,8 @@ function AppRoutes() {
             <Route path="/about" element={<About />} />
 
             <Route path="/contact" element={<Contact />} />
+
+            <Route path="/wishlist" element={<Wishlist />} />
 
         </Routes>
     );

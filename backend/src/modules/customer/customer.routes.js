@@ -1,12 +1,16 @@
 import { Router } from "express";
 
-import authMiddleware from "../../middleware/customerAuthMiddleware.js";
+import customerAuthMiddleware from "../../middleware/customerAuthMiddleware.js";
+import adminAuthMiddleware from "../../middleware/adminAuthMiddleware.js";
+
 import validate from "../../middleware/validate.js";
 
 import {
     profile,
     update,
     updatePassword,
+    getAllCustomers,
+    getCustomer,
 } from "./customer.controller.js";
 
 import {
@@ -16,24 +20,44 @@ import {
 
 const router = Router();
 
+/* =====================================================
+   Customer Routes
+===================================================== */
+
 router.get(
     "/profile",
-    authMiddleware,
+    customerAuthMiddleware,
     profile
 );
 
 router.put(
     "/profile",
-    authMiddleware,
+    customerAuthMiddleware,
     validate(updateProfileSchema),
     update
 );
 
 router.put(
     "/change-password",
-    authMiddleware,
+    customerAuthMiddleware,
     validate(changePasswordSchema),
     updatePassword
+);
+
+/* =====================================================
+   Admin Routes
+===================================================== */
+
+router.get(
+    "/",
+    adminAuthMiddleware,
+    getAllCustomers
+);
+
+router.get(
+    "/:id",
+    adminAuthMiddleware,
+    getCustomer
 );
 
 export default router;

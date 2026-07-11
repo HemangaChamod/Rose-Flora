@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../../hooks/useAuth";
 
 function Login() {
@@ -16,6 +17,8 @@ function Login() {
     const [loading, setLoading] = useState(false);
 
     const [error, setError] = useState("");
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
 
@@ -58,75 +61,261 @@ function Login() {
     return (
 
         <div
-            className="container d-flex justify-content-center align-items-center"
-            style={{ minHeight: "100vh" }}
+            className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-4"
+            style={{
+                background:
+                    "linear-gradient(135deg, #f4fff8 0%, #e8f7ee 50%, #f8fffa 100%)",
+            }}
         >
 
             <div
-                className="card shadow p-4"
-                style={{ width: "420px" }}
+                className="w-100"
+                style={{
+                    maxWidth: "430px",
+                }}
             >
 
-                <h3 className="text-center mb-4">
-                    Admin Login
-                </h3>
+                <div
+                    className="card border-0 shadow-lg overflow-hidden"
+                    style={{
+                        borderRadius: "20px",
+                    }}
+                >
 
-                <form onSubmit={handleSubmit}>
+                    {/* Header */}
 
-                    <div className="mb-3">
+                    <div
+                        className="text-center text-white px-4 py-5"
+                        style={{
+                            background:
+                                "linear-gradient(135deg, #198754, #0f5132)",
+                        }}
+                    >
 
-                        <label>Email</label>
+                        <h2 className="fw-bold mb-1">
 
-                        <input
-                            className="form-control"
-                            name="email"
-                            type="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            required
-                        />
+                            LassanaFlora
 
-                    </div>
+                        </h2>
 
-                    <div className="mb-4">
+                        <p className="mb-0 opacity-75">
 
-                        <label>Password</label>
+                            Admin Management Portal
 
-                        <input
-                            className="form-control"
-                            name="password"
-                            type="password"
-                            value={form.password}
-                            onChange={handleChange}
-                            required
-                        />
+                        </p>
 
                     </div>
 
-                    {error && (
 
-                        <div className="alert alert-danger">
+                    {/* Login Form */}
 
-                            {error}
+                    <div className="card-body p-4 p-sm-5">
+
+                        <div className="mb-4">
+
+                            <h4 className="fw-bold mb-1">
+
+                                Welcome Back
+
+                            </h4>
+
+                            <p className="text-muted mb-0">
+
+                                Sign in to continue to your dashboard.
+
+                            </p>
 
                         </div>
 
-                    )}
-
-                    <button
-                        className="btn btn-success w-100"
-                        disabled={loading}
-                    >
 
                         {
-                            loading
-                                ? "Logging in..."
-                                : "Login"
+
+                            error && (
+
+                                <div
+                                    className="alert alert-danger d-flex align-items-center"
+                                    role="alert"
+                                >
+
+                                    <i className="fas fa-circle-exclamation me-2"></i>
+
+                                    <span>
+
+                                        {error}
+
+                                    </span>
+
+                                </div>
+
+                            )
+
                         }
 
-                    </button>
 
-                </form>
+                        <form onSubmit={handleSubmit}>
+
+                            {/* Email */}
+
+                            <div className="mb-3">
+
+                                <label className="form-label fw-semibold">
+
+                                    Email Address
+
+                                </label>
+
+                                <div className="input-group">
+
+                                    <span className="input-group-text bg-white">
+
+                                        <i className="fas fa-envelope text-muted"></i>
+
+                                    </span>
+
+                                    <input
+                                        className="form-control py-2"
+                                        name="email"
+                                        type="email"
+                                        value={form.email}
+                                        onChange={handleChange}
+                                        placeholder="Enter your email"
+                                        autoComplete="email"
+                                        required
+                                    />
+
+                                </div>
+
+                            </div>
+
+
+                            {/* Password */}
+
+                            <div className="mb-4">
+
+                                <label className="form-label fw-semibold">
+
+                                    Password
+
+                                </label>
+
+                                <div className="input-group">
+
+                                    <span className="input-group-text bg-white">
+
+                                        <i className="fas fa-lock text-muted"></i>
+
+                                    </span>
+
+                                    <input
+                                        className="form-control py-2"
+                                        name="password"
+                                        type={
+                                            showPassword
+                                                ? "text"
+                                                : "password"
+                                        }
+                                        value={form.password}
+                                        onChange={handleChange}
+                                        placeholder="Enter your password"
+                                        autoComplete="current-password"
+                                        required
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-secondary"
+                                        onClick={() =>
+                                            setShowPassword(
+                                                (prev) => !prev
+                                            )
+                                        }
+                                        aria-label={
+                                            showPassword
+                                                ? "Hide password"
+                                                : "Show password"
+                                        }
+                                    >
+
+                                        <i
+                                            className={
+                                                showPassword
+                                                    ? "fas fa-eye-slash"
+                                                    : "fas fa-eye"
+                                            }
+                                        ></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* Login Button */}
+
+                            <button
+                                type="submit"
+                                className="btn btn-success w-100 py-2 fw-semibold"
+                                disabled={loading}
+                                style={{
+                                    borderRadius: "10px",
+                                }}
+                            >
+
+                                {
+
+                                    loading ? (
+
+                                        <>
+
+                                            <span
+                                                className="spinner-border spinner-border-sm me-2"
+                                                aria-hidden="true"
+                                            ></span>
+
+                                            Logging in...
+
+                                        </>
+
+                                    ) : (
+
+                                        <>
+
+                                            <i className="fas fa-right-to-bracket me-2"></i>
+
+                                            Sign In
+
+                                        </>
+
+                                    )
+
+                                }
+
+                            </button>
+
+                        </form>
+
+
+                        <div className="text-center mt-4">
+
+                            <small className="text-muted">
+
+                                Authorized administrators only
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <p className="text-center text-muted small mt-4 mb-0">
+
+                    © {new Date().getFullYear()} LassanaFlora Admin Portal
+
+                </p>
 
             </div>
 

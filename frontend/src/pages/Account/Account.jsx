@@ -170,12 +170,7 @@ function Account() {
                 <div className="ltn__breadcrumb-inner text-center">
                   <h1 className="ltn__page-title">My Account</h1>
                   <div className="ltn__breadcrumb-list">
-                    <ul>
-                      <li>
-                        <Link to="/">Home</Link>
-                      </li>
-                      <li>My Account</li>
-                    </ul>
+                   
                   </div>
                 </div>
               </div>

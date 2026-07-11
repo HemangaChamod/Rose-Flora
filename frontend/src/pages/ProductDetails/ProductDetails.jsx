@@ -1,55 +1,454 @@
-import { useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  Link,
+  useParams,
+} from "react-router-dom";
+
 import Layout from "../../components/layout/Layout";
 
+import {
+  getProduct,
+} from "../../services/productService";
+
+import {
+  useCart,
+} from "../../hooks/useCart";
+
+
 function ProductDetails() {
-  const images = [
-    "img/product/1.png",
-    "img/product/1.png",
-    "img/product/1.png",
-    "img/product/1.png",
-  ];
 
-  const [selectedImage, setSelectedImage] = useState(images[0]);
-  const [qty, setQty] = useState(2);
+  const { id } = useParams();
 
-  return (
-    <Layout>
-      <>
-        {/* Breadcrumb */}
-        <div className="ltn__breadcrumb-area ltn__breadcrumb-area-4">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12">
-                <div className="ltn__breadcrumb-inner text-center">
-                  <h1 className="ltn__page-title">Products</h1>
+  const {
+    addToCart,
+  } = useCart();
 
-                  <div className="ltn__breadcrumb-list">
-                    <ul>
-                      <li>
-                        <a href="/">Home</a>
-                      </li>
-                      <li>Products</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+
+  const [product, setProduct] =
+    useState(null);
+
+  const [
+    selectedImage,
+    setSelectedImage,
+  ] = useState("");
+
+  const [qty, setQty] =
+    useState(1);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  const [
+    showCartModal,
+    setShowCartModal,
+  ] = useState(false);
+
+
+  useEffect(() => {
+
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant",
+    });
+
+
+    const loadProduct = async () => {
+
+      try {
+
+        setLoading(true);
+
+        setError("");
+
+
+        const res =
+          await getProduct(id);
+
+        const productData =
+          res.data || res;
+
+
+        setProduct(productData);
+
+        setQty(1);
+
+
+        if (
+          productData.images &&
+          productData.images.length > 0
+        ) {
+
+          const sortedImages = [
+            ...productData.images,
+          ].sort(
+            (a, b) =>
+              a.displayOrder -
+              b.displayOrder
+          );
+
+
+          setSelectedImage(
+            sortedImages[0].imageUrl
+          );
+
+        }
+
+      } catch (err) {
+
+        console.error(
+          "Unable to load product:",
+          err
+        );
+
+
+        setError(
+          err.response?.data?.message ||
+          "Unable to load product."
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+
+    if (id) {
+
+      loadProduct();
+
+    }
+
+  }, [id]);
+
+
+  const formatPrice = (price) => {
+
+    return Number(
+      price || 0
+    ).toLocaleString(
+      "en-LK",
+      {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }
+    );
+
+  };
+
+
+  const increaseQuantity = () => {
+
+    if (
+      qty < product.quantity
+    ) {
+
+      setQty(
+        (currentQty) =>
+          currentQty + 1
+      );
+
+    }
+
+  };
+
+
+  const decreaseQuantity = () => {
+
+    if (qty > 1) {
+
+      setQty(
+        (currentQty) =>
+          currentQty - 1
+      );
+
+    }
+
+  };
+
+
+  const handleAddToCart = () => {
+
+    const added = addToCart(
+      product,
+      qty
+    );
+
+
+    if (added) {
+
+      setShowCartModal(true);
+
+    }
+
+  };
+
+
+  if (loading) {
+
+    return (
+
+      <Layout>
+
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{
+            minHeight: "600px",
+          }}
+        >
+
+          <div
+            className="spinner-border text-danger"
+            role="status"
+          ></div>
+
         </div>
 
-        {/* Product Details */}
+      </Layout>
+
+    );
+
+  }
+
+
+  if (
+    error ||
+    !product
+  ) {
+
+    return (
+
+      <Layout>
+
+        <div
+          className="container text-center py-5"
+          style={{
+            minHeight: "500px",
+          }}
+        >
+
+          <h3>
+            Product Not Found
+          </h3>
+
+          <p className="text-muted">
+
+            {error ||
+              "Unable to find this product."}
+
+          </p>
+
+          <Link
+            to="/Shop"
+            className="btn btn-danger"
+          >
+
+            Back to Shop
+
+          </Link>
+
+        </div>
+
+      </Layout>
+
+    );
+
+  }
+
+
+  const images = [
+    ...(product.images || []),
+  ].sort(
+    (a, b) =>
+      a.displayOrder -
+      b.displayOrder
+  );
+
+
+  return (
+
+    <Layout>
+
+      <>
+
+        <style>
+          {`
+
+            .cart-success-backdrop {
+              position: fixed;
+              inset: 0;
+              z-index: 9998;
+
+              background:
+                rgba(0, 0, 0, 0.45);
+
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              padding: 20px;
+            }
+
+            .cart-success-modal {
+              position: relative;
+
+              width: 100%;
+              max-width: 430px;
+
+              background: #ffffff;
+
+              border-radius: 14px;
+
+              padding: 40px 35px;
+
+              text-align: center;
+
+              box-shadow:
+                0 20px 60px
+                rgba(0, 0, 0, 0.2);
+
+              animation:
+                cartModalIn 0.3s ease;
+            }
+
+            @keyframes cartModalIn {
+
+              from {
+                opacity: 0;
+                transform:
+                  translateY(20px)
+                  scale(0.96);
+              }
+
+              to {
+                opacity: 1;
+                transform:
+                  translateY(0)
+                  scale(1);
+              }
+
+            }
+
+            .cart-success-icon {
+              width: 75px;
+              height: 75px;
+
+              margin:
+                0 auto 20px;
+
+              border-radius: 50%;
+
+              background: #fbe5ea;
+
+              color: #ef5b78;
+
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              font-size: 30px;
+            }
+
+            .cart-success-modal h3 {
+              font-size: 24px;
+              margin-bottom: 10px;
+            }
+
+            .cart-success-modal p {
+              color: #777;
+              font-size: 15px;
+              margin-bottom: 28px;
+            }
+
+            .cart-modal-actions {
+              display: flex;
+              gap: 10px;
+            }
+
+            .cart-modal-actions a,
+            .cart-modal-actions button {
+              flex: 1;
+
+              min-height: 48px;
+
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              border: none;
+
+              text-decoration: none;
+
+              font-size: 14px;
+              font-weight: 600;
+
+              cursor: pointer;
+            }
+
+            .continue-shopping-btn {
+              background: #f5f5f5;
+              color: #333;
+            }
+
+            .view-cart-btn {
+              background: #ef5b78;
+              color: #ffffff;
+            }
+
+            .view-cart-btn:hover {
+              color: #ffffff;
+              background: #df4967;
+            }
+
+            @media (max-width: 575px) {
+
+              .cart-success-modal {
+                padding: 35px 22px;
+              }
+
+              .cart-modal-actions {
+                flex-direction: column;
+              }
+
+            }
+
+          `}
+        </style>
+
+
+        {/* BREADCRUMB */}
+
+        <div className="ltn__breadcrumb-area ltn__breadcrumb-area-4">
+
+        </div>
+
+
+        {/* PRODUCT DETAILS */}
+
         <div className="container py-5">
+
           <div className="row">
 
-            {/* Left Images */}
+
             <div className="col-lg-6">
+
               <div
                 style={{
                   display: "flex",
                   gap: "20px",
                 }}
               >
-                {/* Thumbnails */}
+
                 <div
                   style={{
                     width: "110px",
@@ -58,34 +457,47 @@ function ProductDetails() {
                     gap: "15px",
                   }}
                 >
-                  {images.map((img, index) => (
-                    <div
-                      key={index}
-                      onClick={() => setSelectedImage(img)}
-                      style={{
-                        border:
-                          selectedImage === img
-                            ? "1px solid #ff6b81"
-                            : "1px solid #eee",
-                        cursor: "pointer",
-                        padding: "5px",
-                        background: "#fff",
-                      }}
-                    >
-                      <img
-                        src={img}
-                        alt=""
+
+                  {images.map(
+                    (image) => (
+
+                      <div
+                        key={image.id}
+                        onClick={() =>
+                          setSelectedImage(
+                            image.imageUrl
+                          )
+                        }
                         style={{
-                          width: "100%",
-                          height: "110px",
-                          objectFit: "contain",
+                          border:
+                            selectedImage ===
+                            image.imageUrl
+                              ? "1px solid #ff6b81"
+                              : "1px solid #eee",
+                          cursor: "pointer",
+                          padding: "5px",
+                          background: "#fff",
                         }}
-                      />
-                    </div>
-                  ))}
+                      >
+
+                        <img
+                          src={image.imageUrl}
+                          alt={product.name}
+                          style={{
+                            width: "100%",
+                            height: "110px",
+                            objectFit: "contain",
+                          }}
+                        />
+
+                      </div>
+
+                    )
+                  )}
+
                 </div>
 
-                {/* Main Image */}
+
                 <div
                   style={{
                     flex: 1,
@@ -96,113 +508,147 @@ function ProductDetails() {
                     minHeight: "650px",
                   }}
                 >
+
                   <img
-                    src={selectedImage}
-                    alt=""
+                    src={
+                      selectedImage ||
+                      "/img/product/1.png"
+                    }
+                    alt={product.name}
                     style={{
                       maxWidth: "85%",
                       maxHeight: "85%",
                       objectFit: "contain",
                     }}
                   />
+
                 </div>
+
               </div>
+
             </div>
 
-            {/* Right Content */}
+
             <div className="col-lg-6">
 
               <h2
                 style={{
-                  fontSize: "48px",
+                  fontSize: "36px",
                   fontWeight: 500,
                   marginBottom: "20px",
                 }}
               >
-                Pink Flower Tree Red
+
+                {product.name}
+
               </h2>
 
-              {/* Price */}
+
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "15px",
+                  flexWrap: "wrap",
+                  gap: "12px",
                   marginBottom: "25px",
                 }}
               >
+
                 <span
                   style={{
-                    fontSize: "42px",
+                    fontSize: "30px",
                     color: "#ff5d73",
                     fontWeight: 600,
                   }}
                 >
-                  $49.00
+
+                  Rs.{" "}
+                  {formatPrice(
+                    product.salePrice ||
+                    product.regularPrice
+                  )}
+
                 </span>
 
-                <del
-                  style={{
-                    color: "#bbb",
-                    fontSize: "30px",
-                  }}
-                >
-                  $65.00
-                </del>
+
+                {product.salePrice && (
+
+                  <del
+                    style={{
+                      color: "#bbb",
+                      fontSize: "22px",
+                    }}
+                  >
+
+                    Rs.{" "}
+                    {formatPrice(
+                      product.regularPrice
+                    )}
+
+                  </del>
+
+                )}
+
 
                 <span
                   style={{
                     color: "#f6a623",
-                    marginLeft: "15px",
-                    fontSize: "18px",
+                    marginLeft: "10px",
+                    fontSize: "15px",
                   }}
                 >
-                  ★★★★★ (95 Reviews)
+
+                  ★★★★★
+
                 </span>
+
               </div>
 
-              {/* Description */}
+
               <p
                 style={{
-                  fontSize: "18px",
-                  lineHeight: "34px",
+                  fontSize: "16px",
+                  lineHeight: "28px",
                   color: "#555",
-                  marginBottom: "40px",
+                  marginBottom: "35px",
                 }}
               >
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Dignissimos repellendus repudiandae incidunt quidem pariatur
-                expedita, quo quis modi tempore non.
+
+                {product.shortDescription}
+
               </p>
 
-              {/* Quantity + Cart */}
+
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
+                  flexWrap: "wrap",
                   gap: "15px",
-                  marginBottom: "45px",
+                  marginBottom: "40px",
                 }}
               >
-                {/* Quantity */}
+
                 <div
                   style={{
                     display: "flex",
-                    width: "150px",
-                    height: "60px",
+                    width: "140px",
+                    height: "55px",
                     border: "1px solid #eee",
                     alignItems: "center",
                     justifyContent: "space-between",
                     background: "#fafafa",
                   }}
                 >
+
                   <button
-                    onClick={() => qty > 1 && setQty(qty - 1)}
+                    type="button"
+                    onClick={decreaseQuantity}
                     style={{
                       border: "none",
                       background: "transparent",
-                      width: "50px",
-                      fontSize: "24px",
+                      width: "45px",
+                      fontSize: "20px",
                     }}
                   >
                     -
@@ -210,62 +656,79 @@ function ProductDetails() {
 
                   <span
                     style={{
-                      fontSize: "24px",
+                      fontSize: "18px",
                     }}
                   >
                     {qty}
                   </span>
 
                   <button
-                    onClick={() => setQty(qty + 1)}
+                    type="button"
+                    onClick={increaseQuantity}
                     style={{
                       border: "none",
                       background: "transparent",
-                      width: "50px",
-                      fontSize: "24px",
+                      width: "45px",
+                      fontSize: "20px",
                     }}
                   >
                     +
                   </button>
+
                 </div>
 
-                {/* Add Cart */}
+
                 <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  disabled={
+                    product.quantity <= 0
+                  }
                   style={{
                     background: "#ef5b78",
                     color: "#fff",
                     border: "none",
-                    padding: "18px 45px",
-                    fontSize: "18px",
+                    padding: "16px 38px",
+                    fontSize: "15px",
                     fontWeight: 600,
+                    minHeight: "55px",
                   }}
                 >
-                  ADD TO CART
+
+                  {product.quantity <= 0
+                    ? "OUT OF STOCK"
+                    : "ADD TO CART"}
+
                 </button>
 
-                {/* Wishlist */}
+
                 <button
+                  type="button"
                   style={{
-                    width: "60px",
-                    height: "60px",
+                    width: "55px",
+                    height: "55px",
                     border: "1px solid #eee",
                     background: "#fafafa",
-                    fontSize: "22px",
+                    fontSize: "20px",
                   }}
                 >
                   ♡
                 </button>
+
               </div>
 
-              {/* Product Info */}
+
               <table
                 style={{
                   width: "100%",
-                  fontSize: "18px",
+                  fontSize: "16px",
                 }}
               >
+
                 <tbody>
-                  <tr style={{ height: "50px" }}>
+
+                  <tr style={{ height: "45px" }}>
+
                     <td
                       style={{
                         width: "130px",
@@ -274,10 +737,16 @@ function ProductDetails() {
                     >
                       SKU:
                     </td>
-                    <td>12345</td>
+
+                    <td>
+                      {product.sku}
+                    </td>
+
                   </tr>
 
-                  <tr style={{ height: "50px" }}>
+
+                  <tr style={{ height: "45px" }}>
+
                     <td
                       style={{
                         color: "#777",
@@ -285,10 +754,17 @@ function ProductDetails() {
                     >
                       Categories:
                     </td>
-                    <td>Flower</td>
+
+                    <td>
+                      {product.category?.name ||
+                        "-"}
+                    </td>
+
                   </tr>
 
-                  <tr style={{ height: "50px" }}>
+
+                  <tr style={{ height: "45px" }}>
+
                     <td
                       style={{
                         color: "#777",
@@ -296,120 +772,184 @@ function ProductDetails() {
                     >
                       Tags:
                     </td>
-                    <td>Love, Flower, Heart</td>
+
+                    <td>
+
+                      {product.tags?.length > 0
+                        ? product.tags
+                            .map(
+                              (productTag) =>
+                                productTag.tag
+                                  ?.name
+                            )
+                            .filter(Boolean)
+                            .join(", ")
+                        : "-"}
+
+                    </td>
+
                   </tr>
+
                 </tbody>
+
               </table>
 
             </div>
+
           </div>
+
         </div>
-        {/* =====================================
-    PRODUCT DESCRIPTION TABS
-===================================== */}
-<div className="container pb-5">
-  <div className="row">
-    <div className="col-lg-12">
 
-      {/* Tabs */}
-      <ul
-        className="nav justify-content-center"
-        style={{
-          borderTop: "1px solid #e5e5e5",
-          borderBottom: "1px solid #e5e5e5",
-          padding: "0",
-          marginBottom: "45px",
-          listStyle: "none",
-        }}
-      >
-        <li className="nav-item">
-          <button
-            className="nav-link active"
-            style={{
-              background: "#ef5b78",
-              color: "#fff",
-              borderRadius: 0,
-              border: "none",
-              padding: "14px 28px",
-              fontSize: "18px",
-            }}
+
+        {/* DESCRIPTION */}
+
+        <div className="container pb-5">
+
+          <div className="row">
+
+            <div className="col-lg-12">
+
+              <ul
+                className="nav justify-content-center"
+                style={{
+                  borderTop: "1px solid #e5e5e5",
+                  borderBottom: "1px solid #e5e5e5",
+                  padding: "0",
+                  marginBottom: "40px",
+                  listStyle: "none",
+                }}
+              >
+
+                <li className="nav-item">
+
+                  <button
+                    className="nav-link active"
+                    style={{
+                      background: "#ef5b78",
+                      color: "#fff",
+                      borderRadius: 0,
+                      border: "none",
+                      padding: "12px 25px",
+                      fontSize: "16px",
+                    }}
+                  >
+                    Description
+                  </button>
+
+                </li>
+
+              </ul>
+
+
+              <div
+                style={{
+                  textAlign: "center",
+                  maxWidth: "1200px",
+                  margin: "0 auto",
+                }}
+              >
+
+                <p
+                  style={{
+                    fontSize: "16px",
+                    lineHeight: "1.8",
+                    color: "#333",
+                    marginBottom: 0,
+                  }}
+                >
+
+                  {product.fullDescription}
+
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* SUCCESS MODAL */}
+
+        {showCartModal && (
+
+          <div
+            className="cart-success-backdrop"
+            onClick={() =>
+              setShowCartModal(false)
+            }
           >
-            Description
-          </button>
-        </li>
 
-        <li className="nav-item">
-          <button
-            className="nav-link"
-            style={{
-              background: "#444",
-              color: "#fff",
-              borderRadius: 0,
-              border: "none",
-              padding: "14px 28px",
-              marginLeft: "5px",
-              fontSize: "18px",
-            }}
-          >
-            Reviews
-          </button>
-        </li>
+            <div
+              className="cart-success-modal"
+              onClick={(e) =>
+                e.stopPropagation()
+              }
+            >
 
-        <li className="nav-item">
-          <button
-            className="nav-link"
-            style={{
-              background: "#444",
-              color: "#fff",
-              borderRadius: 0,
-              border: "none",
-              padding: "14px 28px",
-              marginLeft: "5px",
-              fontSize: "18px",
-            }}
-          >
-            Shipping
-          </button>
-        </li>
-      </ul>
+              <div className="cart-success-icon">
 
-      {/* Description Content */}
-      <div
-        style={{
-          textAlign: "center",
-          maxWidth: "1500px",
-          margin: "0 auto",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "18px",
-            lineHeight: "2",
-            color: "#333",
-            marginBottom: 0,
-          }}
-        >
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-          enim ad minim veniam, quis nostrud exercitation ullamco laboris
-          nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat
-          nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-          sunt in culpa qui officia deserunt mollit anim id est laborum.
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-          quae ab illo inventore veritatis et quasi architecto beatae vitae
-          dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-          aspernatur aut odit aut fugit.
-        </p>
-      </div>
+                <i className="fas fa-check"></i>
 
-    </div>
-  </div>
-</div>
+              </div>
+
+
+              <h3>
+
+                Added to Cart!
+
+              </h3>
+
+
+              <p>
+
+                {product.name} has been
+                successfully added to your cart.
+
+              </p>
+
+
+              <div className="cart-modal-actions">
+
+                <button
+                  type="button"
+                  className="continue-shopping-btn"
+                  onClick={() =>
+                    setShowCartModal(false)
+                  }
+                >
+
+                  Continue Shopping
+
+                </button>
+
+
+                <Link
+                  to="/Cart"
+                  className="view-cart-btn"
+                >
+
+                  View Cart
+
+                </Link>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
+
       </>
+
     </Layout>
+
   );
+
 }
+
 
 export default ProductDetails;

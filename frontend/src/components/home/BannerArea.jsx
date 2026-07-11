@@ -9,8 +9,8 @@ function BannerArea() {
             <div className="col-lg-4 col-md-6">
               <div className="ltn__banner-item">
                 <div className="ltn__banner-img">
-                  <a href="shop.html">
-                    <img src="/img/banner/1.jpeg" alt="Banner Image" />
+                  <a href="/Shop">
+                    <img src="/img/banner/1.png" alt="Banner Image" />
                   </a>
                 </div>
               </div>
@@ -19,8 +19,8 @@ function BannerArea() {
             <div className="col-lg-4 col-md-6">
               <div className="ltn__banner-item">
                 <div className="ltn__banner-img">
-                  <a href="shop.html">
-                    <img src="/img/banner/1.jpeg" alt="Banner Image" />
+                  <a href="/Shop">
+                    <img src="/img/banner/2.png" alt="Banner Image" />
                   </a>
                 </div>
               </div>
@@ -29,8 +29,8 @@ function BannerArea() {
             <div className="col-lg-4 col-md-6">
               <div className="ltn__banner-item">
                 <div className="ltn__banner-img">
-                  <a href="shop.html">
-                    <img src="/img/banner/1.jpeg" alt="Banner Image" />
+                  <a href="/Shop">
+                    <img src="/img/banner/3.png" alt="Banner Image" />
                   </a>
                 </div>
               </div>

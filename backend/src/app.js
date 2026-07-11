@@ -16,6 +16,8 @@ import productRoutes from "./modules/product/product.routes.js";
 
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 
+import orderRoutes from "./modules/order/order.routes.js";
+
 import errorMiddleware from "./middleware/errorMiddleware.js";
 
 
@@ -38,6 +40,8 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/products", productRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
+
+app.use("/api/orders", orderRoutes);
 
 app.get("/", (req, res) => {
     res.json({

@@ -6,6 +6,8 @@ import AdminLayout from "../../components/layout/AdminLayout";
 
 import CategoryTable from "../../components/category/CategoryTable";
 
+import DeleteConfirmModal from "../../common/DeleteConfirmModal";
+
 import {
     getCategories,
     deleteCategory,
@@ -16,6 +18,12 @@ function Categories() {
     const [categories, setCategories] = useState([]);
 
     const [loading, setLoading] = useState(true);
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     const loadCategories = async () => {
 
@@ -43,23 +51,60 @@ function Categories() {
 
     }, []);
 
-    const handleDelete = async (id) => {
+    const handleDelete = (id) => {
 
-        const confirmed = window.confirm(
-            "Delete this category?"
+        const category = categories.find(
+            (category) => category.id === id
         );
 
-        if (!confirmed) return;
+        if (!category) return;
+
+        setSelectedCategory(category);
+
+        setShowDeleteModal(true);
+
+    };
+
+    const closeDeleteModal = () => {
+
+        if (deleteLoading) return;
+
+        setShowDeleteModal(false);
+
+        setSelectedCategory(null);
+
+    };
+
+    const confirmDelete = async () => {
+
+        if (!selectedCategory) return;
 
         try {
 
-            await deleteCategory(id);
+            setDeleteLoading(true);
 
-            loadCategories();
+            await deleteCategory(
+                selectedCategory.id
+            );
 
-        } catch {
+            setShowDeleteModal(false);
 
-            alert("Unable to delete category.");
+            setSelectedCategory(null);
+
+            await loadCategories();
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                error.response?.data?.message ||
+                "Unable to delete category."
+            );
+
+        } finally {
+
+            setDeleteLoading(false);
 
         }
 
@@ -74,11 +119,15 @@ function Categories() {
                 <div>
 
                     <h2 className="fw-bold">
+
                         Categories
+
                     </h2>
 
                     <p className="text-muted">
+
                         Manage flower categories.
+
                     </p>
 
                 </div>
@@ -87,6 +136,7 @@ function Categories() {
                     className="btn btn-success"
                     to="/categories/add"
                 >
+
                     <i className="fas fa-plus me-2"></i>
 
                     Add Category
@@ -101,29 +151,40 @@ function Categories() {
 
                     {
 
-                        loading ?
+                        loading ? (
 
-                            (
-                                <div className="text-center py-5">
+                            <div className="text-center py-5">
 
-                                    <div className="spinner-border"></div>
+                                <div className="spinner-border"></div>
 
-                                </div>
+                            </div>
 
-                            )
-
-                            :
+                        ) : (
 
                             <CategoryTable
                                 categories={categories}
                                 onDelete={handleDelete}
                             />
 
+                        )
+
                     }
 
                 </div>
 
             </div>
+
+
+            <DeleteConfirmModal
+                show={showDeleteModal}
+                title="Delete Category"
+                message={
+                    `Are you sure you want to delete "${selectedCategory?.name}"?`
+                }
+                loading={deleteLoading}
+                onClose={closeDeleteModal}
+                onConfirm={confirmDelete}
+            />
 
         </AdminLayout>
 

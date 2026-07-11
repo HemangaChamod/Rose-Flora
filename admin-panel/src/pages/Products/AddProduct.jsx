@@ -12,6 +12,8 @@ function AddProduct() {
 
     const [loading, setLoading] = useState(false);
 
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+
     const handleSubmit = async (data) => {
 
         try {
@@ -20,9 +22,7 @@ function AddProduct() {
 
             await createProduct(data);
 
-            alert("Product created successfully.");
-
-            navigate("/products");
+            setShowSuccessModal(true);
 
         } catch (err) {
 
@@ -38,6 +38,14 @@ function AddProduct() {
             setLoading(false);
 
         }
+
+    };
+
+    const handleSuccessClose = () => {
+
+        setShowSuccessModal(false);
+
+        navigate("/products");
 
     };
 
@@ -81,6 +89,76 @@ function AddProduct() {
                 </div>
 
             </div>
+
+            {
+                showSuccessModal && (
+
+                    <>
+
+                        <div
+                            className="modal fade show d-block"
+                            tabIndex="-1"
+                            role="dialog"
+                            aria-modal="true"
+                        >
+
+                            <div className="modal-dialog modal-dialog-centered">
+
+                                <div className="modal-content border-0 shadow">
+
+                                    <div className="modal-body text-center p-5">
+
+                                        <div
+                                            className="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mx-auto mb-4"
+                                            style={{
+                                                width: "75px",
+                                                height: "75px",
+                                                fontSize: "32px",
+                                            }}
+                                        >
+
+                                            <i className="fas fa-check"></i>
+
+                                        </div>
+
+                                        <h3 className="fw-bold mb-3">
+
+                                            Product Added!
+
+                                        </h3>
+
+                                        <p className="text-muted mb-4">
+
+                                            The product has been created successfully.
+
+                                        </p>
+
+                                        <button
+                                            type="button"
+                                            className="btn btn-success px-5"
+                                            onClick={handleSuccessClose}
+                                        >
+
+                                            Continue
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div
+                            className="modal-backdrop fade show"
+                        ></div>
+
+                    </>
+
+                )
+            }
 
         </AdminLayout>
 

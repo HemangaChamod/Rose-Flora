@@ -4,6 +4,8 @@ import {
     getProfile,
     updateProfile,
     changePassword,
+    getCustomers,
+    getCustomerById,
 } from "./customer.service.js";
 
 import { successResponse } from "../../utils/response.js";
@@ -55,3 +57,39 @@ export const updatePassword =
         );
 
     });
+
+/* =======================================================
+   Admin Customer Management
+======================================================= */
+
+export const getAllCustomers = asyncHandler(
+    async (req, res) => {
+
+        const customers =
+            await getCustomers();
+
+        return successResponse(
+            res,
+            "Customers fetched successfully.",
+            customers
+        );
+
+    }
+);
+
+export const getCustomer = asyncHandler(
+    async (req, res) => {
+
+        const customer =
+            await getCustomerById(
+                req.params.id
+            );
+
+        return successResponse(
+            res,
+            "Customer fetched successfully.",
+            customer
+        );
+
+    }
+);

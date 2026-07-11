@@ -2,7 +2,7 @@ function Features() {
   return (
     <>
       {/* FEATURE AREA START ( Feature - 3) */}
-      <div className="ltn__feature-area mt-100 mt--65">
+      <div className="ltn__feature-area mt-70">
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
@@ -13,7 +13,7 @@ function Features() {
                   </div>
                   <div className="ltn__feature-info">
                     <h4>Free shipping</h4>
-                    <p>On all orders over $49.00</p>
+                    <p>On all orders over LKR 3,000</p>
                   </div>
                 </div>
 
@@ -33,7 +33,7 @@ function Features() {
                   </div>
                   <div className="ltn__feature-info">
                     <h4>Secure checkout</h4>
-                    <p>Protected by Paypal</p>
+                    <p>Protected by Payhere</p>
                   </div>
                 </div>
 

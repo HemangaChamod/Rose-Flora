@@ -85,5 +85,94 @@ export const changePassword = async (
             password: hashedPassword,
         },
     });
+};
+
+    export const getCustomers = async () => {
+
+    const customers = await prisma.customer.findMany({
+
+        orderBy: {
+            createdAt: "desc",
+        },
+
+        include: {
+
+            orders: {
+
+                select: {
+                    total: true,
+                },
+
+            },
+
+        },
+
+    });
+
+    return customers.map(customer => ({
+
+        id: customer.id,
+
+        firstName: customer.firstName,
+
+        lastName: customer.lastName,
+
+        email: customer.email,
+
+        phone: customer.phone,
+
+        createdAt: customer.createdAt,
+
+        orderCount: customer.orders.length,
+
+        totalSpent: customer.orders.reduce(
+
+            (sum, order) =>
+
+                sum + Number(order.total),
+
+            0
+
+        ),
+
+    }));
 
 };
+
+export const getCustomerById = async (id) => {
+
+    const customer = await prisma.customer.findUnique({
+
+        where: {
+            id,
+        },
+
+        include: {
+
+            orders: {
+
+                include: {
+
+                    items: true,
+
+                },
+
+                orderBy: {
+                    createdAt: "desc",
+                },
+
+            },
+
+        },
+
+    });
+
+    if (!customer) {
+
+        throw new Error("Customer not found.");
+
+    }
+
+    return customer;
+ }
+

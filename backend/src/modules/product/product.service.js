@@ -201,40 +201,35 @@ export const deleteProduct = async (id) => {
 
     if (!product) {
 
-        throw new Error("Product not found.");
+        throw new Error(
+            "Product not found."
+        );
 
     }
 
-    // Delete images from Cloudinary
     for (const image of product.images) {
-
-        if (!image.publicId) continue;
 
         try {
 
-            await cloudinary.uploader.destroy(image.publicId);
+            await cloudinary.uploader.destroy(
+                image.publicId
+            );
 
         } catch (error) {
 
             console.error(
-                "Cloudinary delete failed:",
-                image.publicId,
-                error.message
+                `Unable to delete Cloudinary image: ${image.publicId}`,
+                error
             );
 
         }
 
     }
 
-    // Soft delete product
-    return await prisma.product.update({
+    return await prisma.product.delete({
 
         where: {
             id,
-        },
-
-        data: {
-            deletedAt: new Date(),
         },
 
     });

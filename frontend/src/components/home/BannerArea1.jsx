@@ -8,7 +8,7 @@ function BannerArea1() {
         <div className="col-md-6">
           <div className="ltn__banner-item">
             <div className="ltn__banner-img">
-              <a href="shop.html">
+              <a href="/Shop">
                 <img src="img/banner/6.jpeg" alt="Banner Image" />
               </a>
             </div>
@@ -17,7 +17,7 @@ function BannerArea1() {
         <div className="col-md-6">
           <div className="ltn__banner-item">
             <div className="ltn__banner-img">
-              <a href="shop.html">
+              <a href="/Shop">
                 <img src="img/banner/7.jpeg" alt="Banner Image" />
               </a>
             </div>
