@@ -1,14 +1,21 @@
-import { Router } from "express";
+import {
+    Router,
+} from "express";
 
-import customerAuthMiddleware from "../../middleware/customerAuthMiddleware.js";
-import adminAuthMiddleware from "../../middleware/adminAuthMiddleware.js";
+import customerAuthMiddleware
+    from "../../middleware/customerAuthMiddleware.js";
 
-import validate from "../../middleware/validate.js";
+import adminAuthMiddleware
+    from "../../middleware/adminAuthMiddleware.js";
+
+import validate
+    from "../../middleware/validate.js";
 
 import {
     profile,
     update,
     updatePassword,
+    getMyOrders,
     getAllCustomers,
     getCustomer,
 } from "./customer.controller.js";
@@ -18,7 +25,9 @@ import {
     changePasswordSchema,
 } from "./customer.schema.js";
 
+
 const router = Router();
+
 
 /* =====================================================
    Customer Routes
@@ -30,6 +39,7 @@ router.get(
     profile
 );
 
+
 router.put(
     "/profile",
     customerAuthMiddleware,
@@ -37,12 +47,21 @@ router.put(
     update
 );
 
+
 router.put(
     "/change-password",
     customerAuthMiddleware,
     validate(changePasswordSchema),
     updatePassword
 );
+
+
+router.get(
+    "/orders",
+    customerAuthMiddleware,
+    getMyOrders
+);
+
 
 /* =====================================================
    Admin Routes
@@ -54,10 +73,12 @@ router.get(
     getAllCustomers
 );
 
+
 router.get(
     "/:id",
     adminAuthMiddleware,
     getCustomer
 );
+
 
 export default router;

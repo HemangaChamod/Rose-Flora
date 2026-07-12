@@ -4,17 +4,24 @@ import {
     getProfile,
     updateProfile,
     changePassword,
+    getCustomerOrders,
     getCustomers,
     getCustomerById,
 } from "./customer.service.js";
 
-import { successResponse } from "../../utils/response.js";
+import {
+    successResponse,
+} from "../../utils/response.js";
+
 
 export const profile = asyncHandler(
     async (req, res) => {
 
         const customer =
-            await getProfile(req.user.id);
+            await getProfile(
+                req.user.id
+            );
+
 
         return successResponse(
             res,
@@ -25,6 +32,7 @@ export const profile = asyncHandler(
     }
 );
 
+
 export const update = asyncHandler(
     async (req, res) => {
 
@@ -33,6 +41,7 @@ export const update = asyncHandler(
                 req.user.id,
                 req.body
             );
+
 
         return successResponse(
             res,
@@ -43,6 +52,7 @@ export const update = asyncHandler(
     }
 );
 
+
 export const updatePassword =
     asyncHandler(async (req, res) => {
 
@@ -51,12 +61,37 @@ export const updatePassword =
             req.body
         );
 
+
         return successResponse(
             res,
             "Password updated successfully."
         );
 
     });
+
+
+/* =======================================================
+   Customer Orders
+======================================================= */
+
+export const getMyOrders = asyncHandler(
+    async (req, res) => {
+
+        const orders =
+            await getCustomerOrders(
+                req.user.id
+            );
+
+
+        return successResponse(
+            res,
+            "Orders fetched successfully.",
+            orders
+        );
+
+    }
+);
+
 
 /* =======================================================
    Admin Customer Management
@@ -68,6 +103,7 @@ export const getAllCustomers = asyncHandler(
         const customers =
             await getCustomers();
 
+
         return successResponse(
             res,
             "Customers fetched successfully.",
@@ -77,6 +113,7 @@ export const getAllCustomers = asyncHandler(
     }
 );
 
+
 export const getCustomer = asyncHandler(
     async (req, res) => {
 
@@ -84,6 +121,7 @@ export const getCustomer = asyncHandler(
             await getCustomerById(
                 req.params.id
             );
+
 
         return successResponse(
             res,

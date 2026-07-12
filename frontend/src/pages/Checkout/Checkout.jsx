@@ -12,12 +12,17 @@ import {
   useCart,
 } from "../../hooks/useCart";
 
+import {
+  createCODOrder,
+} from "../../services/orderService";
+
 
 function Checkout() {
 
   const {
     cartItems,
     cartSubtotal,
+    clearCart,
   } = useCart();
 
 
@@ -57,6 +62,18 @@ function Checkout() {
   ] = useState(false);
 
 
+  const [
+    placedOrder,
+    setPlacedOrder,
+  ] = useState(null);
+
+
+  const [
+    orderError,
+    setOrderError,
+  ] = useState("");
+
+
   const formatPrice = (price) => {
 
     return Number(
@@ -73,6 +90,7 @@ function Checkout() {
 
 
   const shipping = 0;
+
 
   const total =
     Number(cartSubtotal || 0) +
@@ -243,14 +261,45 @@ function Checkout() {
 
       setSubmitting(true);
 
+      setOrderError("");
 
-      console.log(
-        "Checkout data:",
-        {
 
-          customer: formData,
+      if (paymentMethod === "COD") {
 
-          paymentMethod,
+        const orderData = {
+
+          firstName:
+            formData.firstName.trim(),
+
+          lastName:
+            formData.lastName.trim(),
+
+          email:
+            formData.email.trim(),
+
+          phone:
+            formData.phone
+              .replace(/[\s-]/g, ""),
+
+          addressLine1:
+            formData.addressLine1.trim(),
+
+          addressLine2:
+            formData.addressLine2.trim(),
+
+          city:
+            formData.city.trim(),
+
+          district:
+            formData.district.trim(),
+
+          postalCode:
+            formData.postalCode.trim(),
+
+          orderNotes:
+            formData.orderNotes.trim(),
+
+          paymentMethod: "COD",
 
           items: cartItems.map(
             (item) => ({
@@ -263,20 +312,51 @@ function Checkout() {
             })
           ),
 
-        }
-      );
+        };
 
 
-      /*
-        ORDER API WILL BE CONNECTED HERE.
-      */
+        const response =
+          await createCODOrder(
+            orderData
+          );
 
+
+        const order =
+          response.data;
+
+
+        setPlacedOrder(order);
+
+
+        clearCart();
+
+
+        return;
+
+      }
+
+
+      if (paymentMethod === "CARD") {
+
+        setOrderError(
+          "Card payment will be connected in the next step."
+        );
+
+      }
 
     } catch (error) {
 
       console.error(
         "Unable to place order:",
         error
+      );
+
+
+      setOrderError(
+
+        error.response?.data?.message ||
+        "Unable to place your order. Please try again."
+
       );
 
     } finally {
@@ -288,7 +368,10 @@ function Checkout() {
   };
 
 
-  if (cartItems.length === 0) {
+  if (
+    cartItems.length === 0 &&
+    !placedOrder
+  ) {
 
     return (
 
@@ -634,6 +717,203 @@ function Checkout() {
               justify-content: center;
 
               font-size: 38px;
+            }
+
+
+            .order-success-backdrop {
+              position: fixed;
+              inset: 0;
+
+              z-index: 9999;
+
+              background:
+                rgba(0, 0, 0, 0.5);
+
+              backdrop-filter: blur(3px);
+
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              padding: 20px;
+            }
+
+
+            .order-success-modal {
+              width: 100%;
+              max-width: 470px;
+
+              background: #ffffff;
+
+              border-radius: 18px;
+
+              padding: 45px 38px;
+
+              text-align: center;
+
+              box-shadow:
+                0 25px 70px
+                rgba(0, 0, 0, 0.2);
+
+              animation:
+                orderSuccessIn
+                0.3s ease;
+            }
+
+
+            @keyframes orderSuccessIn {
+
+              from {
+                opacity: 0;
+
+                transform:
+                  translateY(20px)
+                  scale(0.96);
+              }
+
+              to {
+                opacity: 1;
+
+                transform:
+                  translateY(0)
+                  scale(1);
+              }
+
+            }
+
+
+            .order-success-icon {
+              width: 82px;
+              height: 82px;
+
+              margin:
+                0 auto 22px;
+
+              border-radius: 50%;
+
+              background: #e9f8ef;
+
+              color: #28a745;
+
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              font-size: 32px;
+            }
+
+
+            .order-success-modal h3 {
+              font-size: 26px;
+
+              margin-bottom: 12px;
+            }
+
+
+            .order-success-modal p {
+              color: #777777;
+
+              font-size: 15px;
+
+              line-height: 1.7;
+
+              margin-bottom: 25px;
+            }
+
+
+            .order-success-number {
+              background: #f8f8f8;
+
+              padding: 17px 20px;
+
+              margin-bottom: 28px;
+
+              display: flex;
+              flex-direction: column;
+
+              gap: 5px;
+            }
+
+
+            .order-success-number span {
+              color: #777777;
+
+              font-size: 13px;
+            }
+
+
+            .order-success-number strong {
+              color: #222222;
+
+              font-size: 18px;
+            }
+
+
+            .order-success-actions {
+              display: flex;
+
+              gap: 12px;
+            }
+
+
+            .order-success-actions a {
+              flex: 1;
+
+              min-height: 50px;
+
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              text-decoration: none;
+
+              font-size: 14px;
+              font-weight: 600;
+
+              border-radius: 5px;
+            }
+
+
+            .order-success-shop {
+              background: #f5f5f5;
+
+              color: #333333;
+            }
+
+
+            .order-success-shop:hover {
+              color: #333333;
+
+              background: #eeeeee;
+            }
+
+
+            .order-success-orders {
+              background: #ef5b78;
+
+              color: #ffffff;
+            }
+
+
+            .order-success-orders:hover {
+              background: #df4967;
+
+              color: #ffffff;
+            }
+
+
+            @media (max-width: 575px) {
+
+              .order-success-modal {
+                padding:
+                  38px 22px 28px;
+              }
+
+
+              .order-success-actions {
+                flex-direction: column;
+              }
+
             }
 
 
@@ -1100,6 +1380,7 @@ function Checkout() {
                                 <div className="checkout-order-quantity">
 
                                   Qty:{" "}
+
                                   {item.cartQuantity}
 
                                 </div>
@@ -1297,6 +1578,20 @@ function Checkout() {
                     </p>
 
 
+                    {orderError && (
+
+                      <div
+                        className="alert alert-danger"
+                        role="alert"
+                      >
+
+                        {orderError}
+
+                      </div>
+
+                    )}
+
+
                     <button
                       type="submit"
                       className="btn theme-btn-1 btn-effect-1 text-uppercase checkout-place-order"
@@ -1322,6 +1617,85 @@ function Checkout() {
           </div>
 
         </div>
+
+
+        {/* ORDER SUCCESS MODAL */}
+
+        {placedOrder && (
+
+          <div className="order-success-backdrop">
+
+            <div className="order-success-modal">
+
+              <div className="order-success-icon">
+
+                <i className="fas fa-check"></i>
+
+              </div>
+
+
+              <h3>
+
+                Order Placed Successfully!
+
+              </h3>
+
+
+              <p>
+
+                Thank you for your order.
+                Your flowers will be prepared
+                for delivery.
+
+              </p>
+
+
+              <div className="order-success-number">
+
+                <span>
+
+                  Order Number
+
+                </span>
+
+
+                <strong>
+
+                  {placedOrder.orderNumber}
+
+                </strong>
+
+              </div>
+
+
+              <div className="order-success-actions">
+
+                <Link
+                  to="/Shop"
+                  className="order-success-shop"
+                >
+
+                  Continue Shopping
+
+                </Link>
+
+
+                <Link
+                  to="/Account"
+                  className="order-success-orders"
+                >
+
+                  View My Orders
+
+                </Link>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
 
       </>
 

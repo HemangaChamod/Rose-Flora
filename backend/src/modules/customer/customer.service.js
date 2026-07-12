@@ -1,12 +1,15 @@
 import bcrypt from "bcrypt";
 import prisma from "../../lib/prisma.js";
 
+
 export const getProfile = async (customerId) => {
 
     return prisma.customer.findUnique({
+
         where: {
             id: customerId,
         },
+
         select: {
             id: true,
             firstName: true,
@@ -16,9 +19,11 @@ export const getProfile = async (customerId) => {
             createdAt: true,
             updatedAt: true,
         },
+
     });
 
 };
+
 
 export const updateProfile = async (
     customerId,
@@ -26,14 +31,17 @@ export const updateProfile = async (
 ) => {
 
     return prisma.customer.update({
+
         where: {
             id: customerId,
         },
+
         data: {
             firstName: data.firstName,
             lastName: data.lastName,
             phone: data.phone,
         },
+
         select: {
             id: true,
             firstName: true,
@@ -43,9 +51,11 @@ export const updateProfile = async (
             createdAt: true,
             updatedAt: true,
         },
+
     });
 
 };
+
 
 export const changePassword = async (
     customerId,
@@ -54,10 +64,22 @@ export const changePassword = async (
 
     const customer =
         await prisma.customer.findUnique({
+
             where: {
                 id: customerId,
             },
+
         });
+
+
+    if (!customer) {
+
+        throw new Error(
+            "Customer not found."
+        );
+
+    }
+
 
     const passwordMatch =
         await bcrypt.compare(
@@ -65,11 +87,15 @@ export const changePassword = async (
             customer.password
         );
 
+
     if (!passwordMatch) {
+
         throw new Error(
             "Current password is incorrect."
         );
+
     }
+
 
     const hashedPassword =
         await bcrypt.hash(
@@ -77,102 +103,164 @@ export const changePassword = async (
             10
         );
 
+
     await prisma.customer.update({
+
         where: {
             id: customerId,
         },
+
         data: {
             password: hashedPassword,
         },
+
     });
+
 };
 
-    export const getCustomers = async () => {
 
-    const customers = await prisma.customer.findMany({
+/* =======================================================
+   Customer Orders
+======================================================= */
+
+export const getCustomerOrders = async (
+    customerId
+) => {
+
+    return prisma.order.findMany({
+
+        where: {
+            customerId,
+        },
+
+        include: {
+
+            items: {
+
+                orderBy: {
+                    createdAt: "asc",
+                },
+
+            },
+
+        },
 
         orderBy: {
             createdAt: "desc",
         },
 
-        include: {
-
-            orders: {
-
-                select: {
-                    total: true,
-                },
-
-            },
-
-        },
-
     });
-
-    return customers.map(customer => ({
-
-        id: customer.id,
-
-        firstName: customer.firstName,
-
-        lastName: customer.lastName,
-
-        email: customer.email,
-
-        phone: customer.phone,
-
-        createdAt: customer.createdAt,
-
-        orderCount: customer.orders.length,
-
-        totalSpent: customer.orders.reduce(
-
-            (sum, order) =>
-
-                sum + Number(order.total),
-
-            0
-
-        ),
-
-    }));
 
 };
 
-export const getCustomerById = async (id) => {
 
-    const customer = await prisma.customer.findUnique({
+/* =======================================================
+   Admin Customer Management
+======================================================= */
 
-        where: {
-            id,
-        },
+export const getCustomers = async () => {
 
-        include: {
+    const customers =
+        await prisma.customer.findMany({
 
-            orders: {
+            orderBy: {
+                createdAt: "desc",
+            },
 
-                include: {
+            include: {
 
-                    items: true,
+                orders: {
 
-                },
+                    select: {
+                        total: true,
+                    },
 
-                orderBy: {
-                    createdAt: "desc",
                 },
 
             },
 
-        },
+        });
 
-    });
+
+    return customers.map(
+        (customer) => ({
+
+            id: customer.id,
+
+            firstName:
+                customer.firstName,
+
+            lastName:
+                customer.lastName,
+
+            email:
+                customer.email,
+
+            phone:
+                customer.phone,
+
+            createdAt:
+                customer.createdAt,
+
+            orderCount:
+                customer.orders.length,
+
+            totalSpent:
+                customer.orders.reduce(
+
+                    (sum, order) =>
+                        sum +
+                        Number(order.total),
+
+                    0
+
+                ),
+
+        })
+    );
+
+};
+
+
+export const getCustomerById = async (id) => {
+
+    const customer =
+        await prisma.customer.findUnique({
+
+            where: {
+                id,
+            },
+
+            include: {
+
+                orders: {
+
+                    include: {
+
+                        items: true,
+
+                    },
+
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+
+                },
+
+            },
+
+        });
+
 
     if (!customer) {
 
-        throw new Error("Customer not found.");
+        throw new Error(
+            "Customer not found."
+        );
 
     }
 
-    return customer;
- }
 
+    return customer;
+
+};
