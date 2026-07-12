@@ -9,7 +9,7 @@ function BannerArea2() {
           <div className="ltn__banner-item">
             <div className="ltn__banner-img">
               <a href="/Shop">
-                <img src="img/banner/10.png" alt="Banner Image" />
+                <img src="img/banner/10.webp" alt="Banner Image" />
               </a>
             </div>
           </div>
