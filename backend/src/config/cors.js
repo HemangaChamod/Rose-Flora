@@ -1,26 +1,45 @@
+const developmentOrigins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+];
+
+const productionOrigins = (
+    process.env.CORS_ORIGINS || ""
+)
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
+    ...developmentOrigins,
+    ...productionOrigins,
 ];
 
 const corsOptions = {
-  origin: (origin, callback) => {
 
-    if (!origin || allowedOrigins.includes(origin)) {
+    origin: (origin, callback) => {
 
-      callback(null, true);
+        if (
+            !origin ||
+            allowedOrigins.includes(origin)
+        ) {
 
-    } else {
+            return callback(null, true);
 
-      callback(
-        new Error("Not allowed by CORS")
-      );
+        }
 
-    }
+        console.error(
+            `CORS blocked origin: ${origin}`
+        );
 
-  },
+        return callback(
+            new Error("Not allowed by CORS")
+        );
 
-  credentials: true,
+    },
+
+    credentials: true,
+
 };
 
 export default corsOptions;
