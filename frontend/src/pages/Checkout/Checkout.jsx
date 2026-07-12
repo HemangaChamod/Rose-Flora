@@ -14,6 +14,7 @@ import {
 
 import {
   createCODOrder,
+  createCardOrder,
 } from "../../services/orderService";
 
 
@@ -232,6 +233,61 @@ function Checkout() {
   };
 
 
+  const createOrderData = () => {
+
+    return {
+
+      firstName:
+        formData.firstName.trim(),
+
+      lastName:
+        formData.lastName.trim(),
+
+      email:
+        formData.email.trim(),
+
+      phone:
+        formData.phone.replace(
+          /[\s-]/g,
+          ""
+        ),
+
+      addressLine1:
+        formData.addressLine1.trim(),
+
+      addressLine2:
+        formData.addressLine2.trim(),
+
+      city:
+        formData.city.trim(),
+
+      district:
+        formData.district.trim(),
+
+      postalCode:
+        formData.postalCode.trim(),
+
+      orderNotes:
+        formData.orderNotes.trim(),
+
+      paymentMethod,
+
+      items: cartItems.map(
+        (item) => ({
+
+          productId: item.id,
+
+          quantity:
+            item.cartQuantity,
+
+        })
+      ),
+
+    };
+
+  };
+
+
   const handleSubmit = async (event) => {
 
     event.preventDefault();
@@ -264,56 +320,15 @@ function Checkout() {
       setOrderError("");
 
 
+      const orderData =
+        createOrderData();
+
+
+      /* ==============================================
+         CASH ON DELIVERY
+      ============================================== */
+
       if (paymentMethod === "COD") {
-
-        const orderData = {
-
-          firstName:
-            formData.firstName.trim(),
-
-          lastName:
-            formData.lastName.trim(),
-
-          email:
-            formData.email.trim(),
-
-          phone:
-            formData.phone
-              .replace(/[\s-]/g, ""),
-
-          addressLine1:
-            formData.addressLine1.trim(),
-
-          addressLine2:
-            formData.addressLine2.trim(),
-
-          city:
-            formData.city.trim(),
-
-          district:
-            formData.district.trim(),
-
-          postalCode:
-            formData.postalCode.trim(),
-
-          orderNotes:
-            formData.orderNotes.trim(),
-
-          paymentMethod: "COD",
-
-          items: cartItems.map(
-            (item) => ({
-
-              productId: item.id,
-
-              quantity:
-                item.cartQuantity,
-
-            })
-          ),
-
-        };
-
 
         const response =
           await createCODOrder(
@@ -336,11 +351,49 @@ function Checkout() {
       }
 
 
+      /* ==============================================
+         STRIPE HOSTED CHECKOUT
+      ============================================== */
+
       if (paymentMethod === "CARD") {
 
-        setOrderError(
-          "Card payment will be connected in the next step."
-        );
+        const response =
+          await createCardOrder(
+            orderData
+          );
+
+
+        const paymentData =
+          response.data;
+
+
+        const checkoutUrl =
+          paymentData.checkoutUrl;
+
+
+        if (!checkoutUrl) {
+
+          throw new Error(
+            "Stripe Checkout URL was not returned."
+          );
+
+        }
+
+
+        /*
+         * Do not clear the cart here.
+         *
+         * The customer has not completed payment yet.
+         * Stripe webhook remains the payment source
+         * of truth.
+         */
+
+
+        window.location.href =
+          checkoutUrl;
+
+
+        return;
 
       }
 
@@ -355,6 +408,7 @@ function Checkout() {
       setOrderError(
 
         error.response?.data?.message ||
+        error.message ||
         "Unable to place your order. Please try again."
 
       );
@@ -677,6 +731,54 @@ function Checkout() {
               color: #777777;
 
               font-size: 14px;
+            }
+
+
+            .stripe-hosted-notice {
+              margin-top: 18px;
+
+              padding: 18px 20px;
+
+              background: #f8f8f8;
+
+              border: 1px solid #eeeeee;
+
+              border-radius: 6px;
+
+              display: flex;
+
+              align-items: flex-start;
+
+              gap: 13px;
+            }
+
+
+            .stripe-hosted-notice i {
+              color: #28a745;
+
+              font-size: 20px;
+
+              margin-top: 2px;
+            }
+
+
+            .stripe-hosted-notice strong {
+              display: block;
+
+              color: #333333;
+
+              font-size: 14px;
+
+              margin-bottom: 5px;
+            }
+
+
+            .stripe-hosted-notice span {
+              color: #777777;
+
+              font-size: 13px;
+
+              line-height: 1.6;
             }
 
 
@@ -1004,12 +1106,8 @@ function Checkout() {
                             type="text"
                             name="firstName"
                             placeholder="First name"
-                            value={
-                              formData.firstName
-                            }
-                            onChange={
-                              handleChange
-                            }
+                            value={formData.firstName}
+                            onChange={handleChange}
                           />
 
 
@@ -1036,12 +1134,8 @@ function Checkout() {
                             type="text"
                             name="lastName"
                             placeholder="Last name"
-                            value={
-                              formData.lastName
-                            }
-                            onChange={
-                              handleChange
-                            }
+                            value={formData.lastName}
+                            onChange={handleChange}
                           />
 
 
@@ -1068,12 +1162,8 @@ function Checkout() {
                             type="email"
                             name="email"
                             placeholder="Email address"
-                            value={
-                              formData.email
-                            }
-                            onChange={
-                              handleChange
-                            }
+                            value={formData.email}
+                            onChange={handleChange}
                           />
 
 
@@ -1100,12 +1190,8 @@ function Checkout() {
                             type="tel"
                             name="phone"
                             placeholder="Phone number"
-                            value={
-                              formData.phone
-                            }
-                            onChange={
-                              handleChange
-                            }
+                            value={formData.phone}
+                            onChange={handleChange}
                           />
 
 
@@ -1139,12 +1225,8 @@ function Checkout() {
                         type="text"
                         name="addressLine1"
                         placeholder="House number and street name"
-                        value={
-                          formData.addressLine1
-                        }
-                        onChange={
-                          handleChange
-                        }
+                        value={formData.addressLine1}
+                        onChange={handleChange}
                       />
 
 
@@ -1167,12 +1249,8 @@ function Checkout() {
                         type="text"
                         name="addressLine2"
                         placeholder="Apartment, suite or unit (optional)"
-                        value={
-                          formData.addressLine2
-                        }
-                        onChange={
-                          handleChange
-                        }
+                        value={formData.addressLine2}
+                        onChange={handleChange}
                       />
 
                     </div>
@@ -1196,12 +1274,8 @@ function Checkout() {
                             type="text"
                             name="city"
                             placeholder="City"
-                            value={
-                              formData.city
-                            }
-                            onChange={
-                              handleChange
-                            }
+                            value={formData.city}
+                            onChange={handleChange}
                           />
 
 
@@ -1235,12 +1309,8 @@ function Checkout() {
                             type="text"
                             name="district"
                             placeholder="District"
-                            value={
-                              formData.district
-                            }
-                            onChange={
-                              handleChange
-                            }
+                            value={formData.district}
+                            onChange={handleChange}
                           />
 
 
@@ -1274,12 +1344,8 @@ function Checkout() {
                             type="text"
                             name="postalCode"
                             placeholder="Postal code"
-                            value={
-                              formData.postalCode
-                            }
-                            onChange={
-                              handleChange
-                            }
+                            value={formData.postalCode}
+                            onChange={handleChange}
                           />
 
                         </div>
@@ -1301,12 +1367,8 @@ function Checkout() {
                       <textarea
                         name="orderNotes"
                         placeholder="Special notes for flower preparation or delivery."
-                        value={
-                          formData.orderNotes
-                        }
-                        onChange={
-                          handleChange
-                        }
+                        value={formData.orderNotes}
+                        onChange={handleChange}
                       />
 
                     </div>
@@ -1379,9 +1441,7 @@ function Checkout() {
 
                                 <div className="checkout-order-quantity">
 
-                                  Qty:{" "}
-
-                                  {item.cartQuantity}
+                                  Qty: {item.cartQuantity}
 
                                 </div>
 
@@ -1490,14 +1550,17 @@ function Checkout() {
                           name="paymentMethod"
                           value="COD"
                           checked={
-                            paymentMethod ===
-                            "COD"
+                            paymentMethod === "COD"
                           }
-                          onChange={(event) =>
+                          onChange={(event) => {
+
                             setPaymentMethod(
                               event.target.value
-                            )
-                          }
+                            );
+
+                            setOrderError("");
+
+                          }}
                         />
 
 
@@ -1510,8 +1573,7 @@ function Checkout() {
                       </label>
 
 
-                      {paymentMethod ===
-                        "COD" && (
+                      {paymentMethod === "COD" && (
 
                         <div className="checkout-payment-content">
 
@@ -1534,14 +1596,17 @@ function Checkout() {
                           name="paymentMethod"
                           value="CARD"
                           checked={
-                            paymentMethod ===
-                            "CARD"
+                            paymentMethod === "CARD"
                           }
-                          onChange={(event) =>
+                          onChange={(event) => {
+
                             setPaymentMethod(
                               event.target.value
-                            )
-                          }
+                            );
+
+                            setOrderError("");
+
+                          }}
                         />
 
 
@@ -1554,13 +1619,45 @@ function Checkout() {
                       </label>
 
 
-                      {paymentMethod ===
-                        "CARD" && (
+                      {paymentMethod === "CARD" && (
 
                         <div className="checkout-payment-content">
 
-                          Secure card payment will
-                          be processed through Stripe.
+                          <p>
+
+                            Pay securely through
+                            Stripe Checkout.
+
+                          </p>
+
+
+                          <div className="stripe-hosted-notice">
+
+                            <i className="fas fa-lock"></i>
+
+
+                            <div>
+
+                              <strong>
+
+                                Secure Stripe Checkout
+
+                              </strong>
+
+
+                              <span>
+
+                                You will be redirected
+                                to Stripe's secure
+                                payment page to enter
+                                your card details and
+                                complete your payment.
+
+                              </span>
+
+                            </div>
+
+                          </div>
 
                         </div>
 
@@ -1599,9 +1696,11 @@ function Checkout() {
                     >
 
                       {submitting
-                        ? "Processing..."
+                        ? paymentMethod === "CARD"
+                          ? "Redirecting to Stripe..."
+                          : "Processing..."
                         : paymentMethod === "CARD"
-                        ? "Continue to Payment"
+                        ? "Continue to Secure Payment"
                         : "Place Order"}
 
                     </button>
@@ -1619,7 +1718,7 @@ function Checkout() {
         </div>
 
 
-        {/* ORDER SUCCESS MODAL */}
+        {/* COD ORDER SUCCESS MODAL */}
 
         {placedOrder && (
 

@@ -1,7 +1,21 @@
 import { z } from "zod";
 
 
-export const createOrderSchema = z.object({
+const orderItemSchema = z.object({
+
+    productId: z
+        .string()
+        .min(1),
+
+    quantity: z
+        .number()
+        .int()
+        .positive(),
+
+});
+
+
+const baseOrderSchema = z.object({
 
     firstName: z
         .string()
@@ -56,49 +70,55 @@ export const createOrderSchema = z.object({
         .optional()
         .default(""),
 
-    paymentMethod: z.literal("COD"),
-
     items: z
-        .array(
-
-            z.object({
-
-                productId: z
-                    .string()
-                    .min(1),
-
-                quantity: z
-                    .number()
-                    .int()
-                    .positive(),
-
-            })
-
-        )
-        .min(1, "Order must contain at least one product."),
+        .array(orderItemSchema)
+        .min(
+            1,
+            "Order must contain at least one product."
+        ),
 
 });
 
 
-export const updateOrderStatusSchema = z.object({
+export const createCODOrderSchema =
+    baseOrderSchema.extend({
 
-    orderStatus: z.enum([
-        "PENDING",
-        "PROCESSING",
-        "SHIPPED",
-        "DELIVERED",
-    ]),
+        paymentMethod:
+            z.literal("COD"),
 
-});
+    });
 
 
-export const updatePaymentStatusSchema = z.object({
+export const createCardOrderSchema =
+    baseOrderSchema.extend({
 
-    paymentStatus: z.enum([
-        "PENDING",
-        "PAID",
-        "FAILED",
-        "REFUNDED",
-    ]),
+        paymentMethod:
+            z.literal("CARD"),
 
-});
+    });
+
+
+export const updateOrderStatusSchema =
+    z.object({
+
+        orderStatus: z.enum([
+            "PENDING",
+            "PROCESSING",
+            "SHIPPED",
+            "DELIVERED",
+        ]),
+
+    });
+
+
+export const updatePaymentStatusSchema =
+    z.object({
+
+        paymentStatus: z.enum([
+            "PENDING",
+            "PAID",
+            "FAILED",
+            "REFUNDED",
+        ]),
+
+    });

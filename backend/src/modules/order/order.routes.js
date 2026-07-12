@@ -7,13 +7,16 @@ import customerAuthMiddleware from "../../middleware/customerAuthMiddleware.js";
 import validate from "../../middleware/validate.js";
 
 import {
-    createOrderSchema,
+    createCODOrderSchema,
+    createCardOrderSchema,
     updateOrderStatusSchema,
     updatePaymentStatusSchema,
 } from "./order.schema.js";
 
 import {
     createCOD,
+    createCard,
+    getCheckoutSuccess,
     getMyOrders,
     getMyOrder,
     getAll,
@@ -33,8 +36,22 @@ const router = Router();
 router.post(
     "/cod",
     customerAuthMiddleware,
-    validate(createOrderSchema),
+    validate(createCODOrderSchema),
     createCOD
+);
+
+
+router.post(
+    "/card",
+    customerAuthMiddleware,
+    validate(createCardOrderSchema),
+    createCard
+);
+
+router.get(
+    "/checkout-success/:sessionId",
+    customerAuthMiddleware,
+    getCheckoutSuccess
 );
 
 

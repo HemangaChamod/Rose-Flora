@@ -219,8 +219,6 @@ function Cart() {
 
               margin: 0;
 
-              border: none;
-
               box-sizing: border-box;
             }
 

@@ -167,7 +167,9 @@ model Order {
   shippingCost Decimal @default(0) @db.Decimal(10, 2)
   total        Decimal @db.Decimal(10, 2)
 
-  stripePaymentId String?
+  stripePaymentId String? @unique
+
+  stockProcessed Boolean @default(false)
 
   items OrderItem[]
 
