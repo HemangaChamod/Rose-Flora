@@ -96,7 +96,16 @@ export default function Register() {
 
       await register(formData);
 
-      navigate("/account");
+      navigate("/verify-email-sent", {
+
+          state: {
+
+              email: formData.email,
+
+          },
+
+      });
+      
     } catch (err) {
       setError(
         err?.response?.data?.message ||

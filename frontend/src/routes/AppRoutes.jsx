@@ -11,6 +11,8 @@ import Account from "../pages/Account/Account";
 import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
 import Wishlist from "../pages/Wishlist/Wishlist";
+import VerifyEmailSent from "../pages/VerifyEmailSent/VerifyEmailSent";
+import VerifyEmail from "../pages/VerifyEmail/VerifyEmail";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 
 import ProtectedRoute from "./ProtectedRoute";
@@ -38,6 +40,7 @@ function AppRoutes() {
                 }
             />
 
+        
             <Route
                 path="/PaymentSuccess"
                 element={
@@ -45,6 +48,16 @@ function AppRoutes() {
                         <PaymentSuccess />
                     </ProtectedRoute>
                 }
+            />
+
+            <Route
+                path="/verify-email-sent"
+                element={<VerifyEmailSent />}
+            />
+
+            <Route
+                path="/verify-email"
+                element={<VerifyEmail />}
             />
 
             <Route path="/login" element={<Login />} />

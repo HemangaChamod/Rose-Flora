@@ -27,6 +27,10 @@ function Login() {
             [e.target.name]: e.target.value,
         });
 
+        if (error) {
+            setError("");
+        }
+
     };
 
     const handleSubmit = async (e) => {
@@ -47,7 +51,7 @@ function Login() {
 
             setError(
                 err.response?.data?.message ||
-                "Login failed."
+                "Unable to sign in. Please check your credentials."
             );
 
         } finally {
@@ -61,83 +65,186 @@ function Login() {
     return (
 
         <div
-            className="min-vh-100 d-flex align-items-center justify-content-center px-3 py-4"
+            className="min-vh-100 d-flex align-items-center justify-content-center"
             style={{
-                background:
-                    "linear-gradient(135deg, #f4fff8 0%, #e8f7ee 50%, #f8fffa 100%)",
+                background: `
+                    radial-gradient(
+                        circle at 10% 10%,
+                        rgba(233, 83, 115, 0.14),
+                        transparent 32%
+                    ),
+                    radial-gradient(
+                        circle at 90% 90%,
+                        rgba(233, 83, 115, 0.1),
+                        transparent 30%
+                    ),
+                    linear-gradient(
+                        135deg,
+                        #fffafb 0%,
+                        #ffffff 50%,
+                        #fff5f7 100%
+                    )
+                `,
+                padding: "32px 20px",
+                position: "relative",
+                overflow: "hidden",
             }}
         >
+
+            {/* Decorative Background */}
+
+            <div
+                style={{
+                    position: "absolute",
+                    width: "320px",
+                    height: "320px",
+                    borderRadius: "50%",
+                    background: "rgba(233, 83, 115, 0.06)",
+                    top: "-150px",
+                    right: "-100px",
+                    pointerEvents: "none",
+                }}
+            />
+
+            <div
+                style={{
+                    position: "absolute",
+                    width: "250px",
+                    height: "250px",
+                    borderRadius: "50%",
+                    border: "1px solid rgba(233, 83, 115, 0.12)",
+                    bottom: "-120px",
+                    left: "-80px",
+                    pointerEvents: "none",
+                }}
+            />
+
 
             <div
                 className="w-100"
                 style={{
-                    maxWidth: "430px",
+                    maxWidth: "470px",
+                    position: "relative",
+                    zIndex: 1,
                 }}
             >
 
-                <div
-                    className="card border-0 shadow-lg overflow-hidden"
-                    style={{
-                        borderRadius: "20px",
-                    }}
-                >
+                {/* Brand */}
 
-                    {/* Header */}
+                <div className="text-center mb-4">
 
-                    <div
-                        className="text-center text-white px-4 py-5"
+                   
+                    <h2
+                        className="fw-bold mb-1"
                         style={{
-                            background:
-                                "linear-gradient(135deg, #198754, #0f5132)",
+                            color: "#1f1f1f",
+                            letterSpacing: "-0.7px",
                         }}
                     >
 
-                        <h2 className="fw-bold mb-1">
+                        LassanaFlora
 
-                            LassanaFlora
+                    </h2>
 
-                        </h2>
+                    <p
+                        className="mb-0"
+                        style={{
+                            color: "#8b8b8b",
+                            fontSize: "14px",
+                        }}
+                    >
 
-                        <p className="mb-0 opacity-75">
+                        Administration Portal
 
-                            Admin Management Portal
+                    </p>
 
-                        </p>
-
-                    </div>
+                </div>
 
 
-                    {/* Login Form */}
+                {/* Login Card */}
 
-                    <div className="card-body p-4 p-sm-5">
+                <div
+                    style={{
+                        background: "rgba(255, 255, 255, 0.96)",
+                        borderRadius: "24px",
+                        border: "1px solid rgba(0, 0, 0, 0.06)",
+                        boxShadow:
+                            "0 25px 70px rgba(42, 27, 31, 0.1)",
+                        overflow: "hidden",
+                    }}
+                >
+
+                    {/* Accent Line */}
+
+                    <div
+                        style={{
+                            height: "4px",
+                            background:
+                                "linear-gradient(90deg, #f58aa1, #e95373, #d94364)",
+                        }}
+                    />
+
+
+                    <div
+                        style={{
+                            padding: "42px",
+                        }}
+                    >
+
+                        {/* Heading */}
 
                         <div className="mb-4">
 
-                            <h4 className="fw-bold mb-1">
+                            <h3
+                                className="fw-bold mb-2"
+                                style={{
+                                    color: "#1d1d1f",
+                                    letterSpacing: "-0.5px",
+                                }}
+                            >
 
-                                Welcome Back
+                                Welcome back
 
-                            </h4>
+                            </h3>
 
-                            <p className="text-muted mb-0">
+                            <p
+                                className="mb-0"
+                                style={{
+                                    color: "#8a8a8a",
+                                    fontSize: "15px",
+                                }}
+                            >
 
-                                Sign in to continue to your dashboard.
+                                Sign in securely to manage LassanaFlora.
 
                             </p>
 
                         </div>
 
 
+                        {/* Error */}
+
                         {
 
                             error && (
 
                                 <div
-                                    className="alert alert-danger d-flex align-items-center"
+                                    className="d-flex align-items-start mb-4"
                                     role="alert"
+                                    style={{
+                                        background: "#fff2f4",
+                                        border: "1px solid #ffd5dd",
+                                        borderLeft: "4px solid #e95373",
+                                        borderRadius: "10px",
+                                        padding: "14px 16px",
+                                        color: "#b42343",
+                                        fontSize: "14px",
+                                    }}
                                 >
 
-                                    <i className="fas fa-circle-exclamation me-2"></i>
+                                    <i
+                                        className="fas fa-circle-exclamation me-3 mt-1"
+                                    ></i>
 
                                     <span>
 
@@ -156,31 +263,63 @@ function Login() {
 
                             {/* Email */}
 
-                            <div className="mb-3">
+                            <div className="mb-4">
 
-                                <label className="form-label fw-semibold">
+                                <label
+                                    htmlFor="admin-email"
+                                    className="form-label fw-semibold"
+                                    style={{
+                                        color: "#333333",
+                                        fontSize: "14px",
+                                    }}
+                                >
 
                                     Email Address
 
                                 </label>
 
-                                <div className="input-group">
+                                <div
+                                    className="d-flex align-items-center"
+                                    style={{
+                                        height: "56px",
+                                        border: "1px solid #e2e2e2",
+                                        borderRadius: "12px",
+                                        background: "#fafafa",
+                                        overflow: "hidden",
+                                    }}
+                                >
 
-                                    <span className="input-group-text bg-white">
+                                    <div
+                                        className="d-flex align-items-center justify-content-center"
+                                        style={{
+                                            width: "55px",
+                                            color: "#a2a2a2",
+                                        }}
+                                    >
 
-                                        <i className="fas fa-envelope text-muted"></i>
+                                        <i className="fas fa-envelope"></i>
 
-                                    </span>
+                                    </div>
 
                                     <input
-                                        className="form-control py-2"
+                                        id="admin-email"
                                         name="email"
                                         type="email"
                                         value={form.email}
                                         onChange={handleChange}
-                                        placeholder="Enter your email"
+                                        placeholder="admin@lassanaflora.com"
                                         autoComplete="email"
                                         required
+                                        style={{
+                                            flex: 1,
+                                            height: "100%",
+                                            border: "none",
+                                            outline: "none",
+                                            background: "transparent",
+                                            padding: "0 16px 0 0",
+                                            color: "#242424",
+                                            fontSize: "15px",
+                                        }}
                                     />
 
                                 </div>
@@ -192,22 +331,44 @@ function Login() {
 
                             <div className="mb-4">
 
-                                <label className="form-label fw-semibold">
+                                <label
+                                    htmlFor="admin-password"
+                                    className="form-label fw-semibold"
+                                    style={{
+                                        color: "#333333",
+                                        fontSize: "14px",
+                                    }}
+                                >
 
                                     Password
 
                                 </label>
 
-                                <div className="input-group">
+                                <div
+                                    className="d-flex align-items-center"
+                                    style={{
+                                        height: "56px",
+                                        border: "1px solid #e2e2e2",
+                                        borderRadius: "12px",
+                                        background: "#fafafa",
+                                        overflow: "hidden",
+                                    }}
+                                >
 
-                                    <span className="input-group-text bg-white">
+                                    <div
+                                        className="d-flex align-items-center justify-content-center"
+                                        style={{
+                                            width: "55px",
+                                            color: "#a2a2a2",
+                                        }}
+                                    >
 
-                                        <i className="fas fa-lock text-muted"></i>
+                                        <i className="fas fa-lock"></i>
 
-                                    </span>
+                                    </div>
 
                                     <input
-                                        className="form-control py-2"
+                                        id="admin-password"
                                         name="password"
                                         type={
                                             showPassword
@@ -219,11 +380,19 @@ function Login() {
                                         placeholder="Enter your password"
                                         autoComplete="current-password"
                                         required
+                                        style={{
+                                            flex: 1,
+                                            height: "100%",
+                                            border: "none",
+                                            outline: "none",
+                                            background: "transparent",
+                                            color: "#242424",
+                                            fontSize: "15px",
+                                        }}
                                     />
 
                                     <button
                                         type="button"
-                                        className="btn btn-outline-secondary"
                                         onClick={() =>
                                             setShowPassword(
                                                 (prev) => !prev
@@ -234,6 +403,14 @@ function Login() {
                                                 ? "Hide password"
                                                 : "Show password"
                                         }
+                                        style={{
+                                            width: "55px",
+                                            height: "100%",
+                                            border: "none",
+                                            background: "transparent",
+                                            color: "#999999",
+                                            cursor: "pointer",
+                                        }}
                                     >
 
                                         <i
@@ -255,10 +432,23 @@ function Login() {
 
                             <button
                                 type="submit"
-                                className="btn btn-success w-100 py-2 fw-semibold"
+                                className="w-100 border-0 text-white fw-semibold"
                                 disabled={loading}
                                 style={{
-                                    borderRadius: "10px",
+                                    height: "56px",
+                                    borderRadius: "12px",
+                                    background: loading
+                                        ? "#ef8da2"
+                                        : "linear-gradient(135deg, #f26684, #e95373)",
+                                    boxShadow: loading
+                                        ? "none"
+                                        : "0 12px 28px rgba(233, 83, 115, 0.28)",
+                                    fontSize: "15px",
+                                    letterSpacing: "0.2px",
+                                    cursor: loading
+                                        ? "not-allowed"
+                                        : "pointer",
+                                    transition: "all 0.25s ease",
                                 }}
                             >
 
@@ -273,7 +463,7 @@ function Login() {
                                                 aria-hidden="true"
                                             ></span>
 
-                                            Logging in...
+                                            Signing in...
 
                                         </>
 
@@ -281,9 +471,9 @@ function Login() {
 
                                         <>
 
-                                            <i className="fas fa-right-to-bracket me-2"></i>
+                                            Sign In to Dashboard
 
-                                            Sign In
+                                            <i className="fas fa-arrow-right ms-2"></i>
 
                                         </>
 
@@ -296,13 +486,24 @@ function Login() {
                         </form>
 
 
-                        <div className="text-center mt-4">
+                        {/* Security */}
 
-                            <small className="text-muted">
+                        <div
+                            className="d-flex align-items-center justify-content-center mt-4"
+                            style={{
+                                color: "#999999",
+                                fontSize: "13px",
+                            }}
+                        >
 
-                                Authorized administrators only
+                            <i
+                                className="fas fa-shield-halved me-2"
+                                style={{
+                                    color: "#e95373",
+                                }}
+                            ></i>
 
-                            </small>
+                            Secure access for authorized administrators only
 
                         </div>
 
@@ -311,9 +512,21 @@ function Login() {
                 </div>
 
 
-                <p className="text-center text-muted small mt-4 mb-0">
+                {/* Footer */}
 
-                    © {new Date().getFullYear()} LassanaFlora Admin Portal
+                <p
+                    className="text-center mb-0 mt-4"
+                    style={{
+                        color: "#a0a0a0",
+                        fontSize: "13px",
+                    }}
+                >
+
+                    © {new Date().getFullYear()} LassanaFlora
+
+                    <span className="mx-2">•</span>
+
+                    Admin Management System
 
                 </p>
 

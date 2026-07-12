@@ -5,6 +5,7 @@ import adminAuthMiddleware from "../../middleware/adminAuthMiddleware.js";
 
 import {
     register,
+    verifyEmail,
     login,
     adminLogin,
     getCurrentUser,
@@ -33,6 +34,11 @@ router.post(
     "/register",
     validate(registerSchema),
     register
+);
+
+router.get(
+    "/verify-email",
+    verifyEmail
 );
 
 router.post(
