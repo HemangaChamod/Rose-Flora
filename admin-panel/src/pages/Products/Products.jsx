@@ -10,30 +10,72 @@ import {
     deleteProduct,
 } from "../../services/productService";
 
+
 function Products() {
 
     const [products, setProducts] = useState([]);
+
     const [loading, setLoading] = useState(true);
 
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [deleteLoading, setDeleteLoading] = useState(false);
 
-    const loadProducts = async () => {
+    const [page, setPage] = useState(1);
+
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 10,
+        total: 0,
+        totalPages: 1,
+    });
+
+
+    const [showDeleteModal, setShowDeleteModal] =
+        useState(false);
+
+    const [selectedProduct, setSelectedProduct] =
+        useState(null);
+
+    const [deleteLoading, setDeleteLoading] =
+        useState(false);
+
+
+    const loadProducts = async (currentPage = page) => {
 
         try {
 
             setLoading(true);
 
-            const res = await getProducts();
 
-            setProducts(res.data.products);
+            const res = await getProducts({
+                page: currentPage,
+                limit: 10,
+            });
+
+
+            setProducts(
+                res.data?.products || []
+            );
+
+
+            setPagination(
+                res.data?.pagination || {
+                    page: currentPage,
+                    limit: 10,
+                    total: 0,
+                    totalPages: 1,
+                }
+            );
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Failed to load products:",
+                error
+            );
 
-            alert("Failed to load products.");
+
+            alert(
+                "Failed to load products."
+            );
 
         } finally {
 
@@ -43,11 +85,37 @@ function Products() {
 
     };
 
+
     useEffect(() => {
 
-        loadProducts();
+        loadProducts(page);
 
-    }, []);
+    }, [page]);
+
+
+    const handlePageChange = (newPage) => {
+
+        if (
+            newPage < 1 ||
+            newPage > pagination.totalPages ||
+            newPage === page
+        ) {
+
+            return;
+
+        }
+
+
+        setPage(newPage);
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+
+    };
+
 
     const handleDelete = (product) => {
 
@@ -57,30 +125,61 @@ function Products() {
 
     };
 
+
     const confirmDelete = async () => {
+
+        if (!selectedProduct) {
+
+            return;
+
+        }
+
 
         try {
 
             setDeleteLoading(true);
 
-            await deleteProduct(selectedProduct.id);
 
-            setProducts((prev) =>
-                prev.filter(
-                    (product) =>
-                        product.id !== selectedProduct.id
-                )
+            await deleteProduct(
+                selectedProduct.id
             );
+
 
             setShowDeleteModal(false);
 
             setSelectedProduct(null);
 
+
+            const shouldGoPreviousPage =
+                products.length === 1 &&
+                page > 1;
+
+
+            if (shouldGoPreviousPage) {
+
+                setPage(
+                    (previousPage) =>
+                        previousPage - 1
+                );
+
+            } else {
+
+                await loadProducts(page);
+
+            }
+
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Unable to delete product:",
+                error
+            );
 
-            alert("Unable to delete product.");
+
+            alert(
+                error.response?.data?.message ||
+                "Unable to delete product."
+            );
 
         } finally {
 
@@ -90,21 +189,72 @@ function Products() {
 
     };
 
+
+    const getPageNumbers = () => {
+
+        const pages = [];
+
+        const totalPages =
+            pagination.totalPages;
+
+
+        for (
+            let pageNumber = 1;
+            pageNumber <= totalPages;
+            pageNumber++
+        ) {
+
+            pages.push(pageNumber);
+
+        }
+
+
+        return pages;
+
+    };
+
+
+    const startProduct =
+
+        pagination.total === 0
+
+            ? 0
+
+            : (
+                (pagination.page - 1) *
+                pagination.limit
+            ) + 1;
+
+
+    const endProduct = Math.min(
+
+        pagination.page *
+        pagination.limit,
+
+        pagination.total
+
+    );
+
+
     return (
 
         <AdminLayout>
 
             <div className="container-fluid">
 
-                <div className="d-flex justify-content-between align-items-center mb-4">
+
+                {/* PAGE HEADER */}
+
+                <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
 
                     <div>
 
-                        <h2 className="fw-bold">
+                        <h2 className="fw-bold mb-1">
 
                             Products
 
                         </h2>
+
 
                         <p className="text-muted mb-0">
 
@@ -113,6 +263,7 @@ function Products() {
                         </p>
 
                     </div>
+
 
                     <Link
                         to="/products/add"
@@ -127,9 +278,13 @@ function Products() {
 
                 </div>
 
+
+                {/* PRODUCT CARD */}
+
                 <div className="card shadow-sm border-0">
 
                     <div className="card-body">
+
 
                         {
 
@@ -137,9 +292,18 @@ function Products() {
 
                                 <div className="text-center py-5">
 
-                                    <div className="spinner-border text-success"></div>
+                                    <div className="spinner-border text-success">
 
-                                    <p className="mt-3">
+                                        <span className="visually-hidden">
+
+                                            Loading...
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <p className="mt-3 mb-0">
 
                                         Loading products...
 
@@ -149,10 +313,179 @@ function Products() {
 
                             ) : (
 
-                                <ProductTable
-                                    products={products}
-                                    onDelete={handleDelete}
-                                />
+                                <>
+
+                                    <ProductTable
+                                        products={products}
+                                        onDelete={handleDelete}
+                                    />
+
+
+                                    {
+
+                                        pagination.total > 0 && (
+
+                                            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mt-4 pt-3 border-top">
+
+
+                                                {/* PRODUCT COUNT */}
+
+                                                <p className="text-muted mb-0">
+
+                                                    Showing{" "}
+
+                                                    <strong>
+
+                                                        {startProduct}
+
+                                                    </strong>
+
+                                                    {" "}to{" "}
+
+                                                    <strong>
+
+                                                        {endProduct}
+
+                                                    </strong>
+
+                                                    {" "}of{" "}
+
+                                                    <strong>
+
+                                                        {pagination.total}
+
+                                                    </strong>
+
+                                                    {" "}products
+
+                                                </p>
+
+
+                                                {/* PAGINATION */}
+
+                                                {
+
+                                                    pagination.totalPages > 1 && (
+
+                                                        <nav>
+
+                                                            <ul className="pagination mb-0">
+
+
+                                                                {/* PREVIOUS */}
+
+                                                                <li
+                                                                    className={`page-item ${
+                                                                        page === 1
+                                                                            ? "disabled"
+                                                                            : ""
+                                                                    }`}
+                                                                >
+
+                                                                    <button
+                                                                        type="button"
+                                                                        className="page-link"
+                                                                        onClick={() =>
+                                                                            handlePageChange(
+                                                                                page - 1
+                                                                            )
+                                                                        }
+                                                                    >
+
+                                                                        Previous
+
+                                                                    </button>
+
+                                                                </li>
+
+
+                                                                {/* PAGE NUMBERS */}
+
+                                                                {
+
+                                                                    getPageNumbers().map(
+                                                                        (
+                                                                            pageNumber
+                                                                        ) => (
+
+                                                                            <li
+                                                                                key={
+                                                                                    pageNumber
+                                                                                }
+                                                                                className={`page-item ${
+                                                                                    page ===
+                                                                                    pageNumber
+                                                                                        ? "active"
+                                                                                        : ""
+                                                                                }`}
+                                                                            >
+
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="page-link"
+                                                                                    onClick={() =>
+                                                                                        handlePageChange(
+                                                                                            pageNumber
+                                                                                        )
+                                                                                    }
+                                                                                >
+
+                                                                                    {
+                                                                                        pageNumber
+                                                                                    }
+
+                                                                                </button>
+
+                                                                            </li>
+
+                                                                        )
+                                                                    )
+
+                                                                }
+
+
+                                                                {/* NEXT */}
+
+                                                                <li
+                                                                    className={`page-item ${
+                                                                        page ===
+                                                                        pagination.totalPages
+                                                                            ? "disabled"
+                                                                            : ""
+                                                                    }`}
+                                                                >
+
+                                                                    <button
+                                                                        type="button"
+                                                                        className="page-link"
+                                                                        onClick={() =>
+                                                                            handlePageChange(
+                                                                                page + 1
+                                                                            )
+                                                                        }
+                                                                    >
+
+                                                                        Next
+
+                                                                    </button>
+
+                                                                </li>
+
+                                                            </ul>
+
+                                                        </nav>
+
+                                                    )
+
+                                                }
+
+                                            </div>
+
+                                        )
+
+                                    }
+
+                                </>
 
                             )
 
@@ -164,12 +497,22 @@ function Products() {
 
             </div>
 
+
+            {/* DELETE CONFIRMATION MODAL */}
+
             <DeleteConfirmModal
                 show={showDeleteModal}
                 title="Delete Product"
                 message={`Are you sure you want to delete "${selectedProduct?.name}"?`}
                 loading={deleteLoading}
                 onClose={() => {
+
+                    if (deleteLoading) {
+
+                        return;
+
+                    }
+
 
                     setShowDeleteModal(false);
 
@@ -184,5 +527,6 @@ function Products() {
     );
 
 }
+
 
 export default Products;
