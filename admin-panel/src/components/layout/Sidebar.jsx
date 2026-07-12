@@ -1,13 +1,9 @@
-import { useState } from "react";
-
-import {
-    NavLink,
-} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 
 function Sidebar() {
 
-    const [mobileMenuOpen, setMobileMenuOpen] =
-        useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     const navItems = [
 
@@ -43,56 +39,221 @@ function Sidebar() {
 
     ];
 
-    const getNavLinkClass = ({ isActive }) => {
+    useEffect(() => {
 
-        return `
-            d-flex
-            align-items-center
-            text-white
-            px-4
-            py-3
-            text-decoration-none
-            ${isActive ? "bg-success" : ""}
-        `;
+        const handleResize = () => {
 
-    };
+            if (window.innerWidth >= 992) {
+
+                setIsOpen(false);
+
+            }
+
+        };
+
+        window.addEventListener(
+            "resize",
+            handleResize
+        );
+
+        return () =>
+            window.removeEventListener(
+                "resize",
+                handleResize
+            );
+
+    }, []);
+
+    useEffect(() => {
+
+        if (isOpen) {
+
+            document.body.style.overflow = "hidden";
+
+        } else {
+
+            document.body.style.overflow = "";
+
+        }
+
+        return () => {
+
+            document.body.style.overflow = "";
+
+        };
+
+    }, [isOpen]);
+
+    const getNavClass = ({ isActive }) =>
+
+        `d-flex align-items-center px-4 py-3 text-decoration-none text-white ${
+
+            isActive
+
+                ? "bg-success"
+
+                : ""
+
+        }`;
 
     return (
 
         <>
 
-            {/* Desktop Sidebar */}
+            {/* ===============================
+                Mobile Header
+            =============================== */}
 
-            <div
-                className="bg-dark text-white d-none d-lg-block flex-shrink-0"
+            <header
+                className="d-lg-none bg-dark text-white d-flex justify-content-between align-items-center px-3"
                 style={{
-                    width: "260px",
-                    minHeight: "100vh",
+                    height: "64px",
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 1040,
                 }}
             >
 
-                <h3 className="text-center py-4 mb-0">
+                <h5
+                    className="mb-0 fw-bold"
+                >
 
                     LassanaFlora
 
-                </h3>
+                </h5>
 
-                <nav>
+                <button
+                    className="btn btn-outline-light"
+                    onClick={() =>
+                        setIsOpen(true)
+                    }
+                >
+
+                    <i className="fas fa-bars"></i>
+
+                </button>
+
+            </header>
+
+            {/* ===============================
+                Backdrop
+            =============================== */}
+
+            {
+
+                isOpen && (
+
+                    <div
+
+                        onClick={() =>
+                            setIsOpen(false)
+                        }
+
+                        style={{
+
+                            position: "fixed",
+
+                            inset: 0,
+
+                            background:
+                                "rgba(0,0,0,.45)",
+
+                            zIndex: 1045,
+
+                        }}
+
+                    />
+
+                )
+
+            }
+
+            {/* ===============================
+                Mobile Sidebar
+            =============================== */}
+
+            <aside
+
+                className="bg-dark text-white d-lg-none"
+
+                style={{
+
+                    position: "fixed",
+
+                    top: 0,
+
+                    left: isOpen ? 0 : "-270px",
+
+                    width: "260px",
+
+                    height: "100vh",
+
+                    transition:
+                        "left .3s ease",
+
+                    zIndex: 1050,
+
+                    overflowY: "auto",
+
+                    boxShadow:
+                        "0 0 20px rgba(0,0,0,.4)",
+
+                }}
+
+            >
+
+                <div
+                    className="d-flex justify-content-between align-items-center border-bottom border-secondary px-3"
+                    style={{
+                        height: "64px",
+                    }}
+                >
+
+                    <h5 className="mb-0 fw-bold">
+
+                        LassanaFlora
+
+                    </h5>
+
+                    <button
+                        className="btn btn-light btn-sm"
+                        onClick={() =>
+                            setIsOpen(false)
+                        }
+                    >
+
+                        <i className="fas fa-times"></i>
+
+                    </button>
+
+                </div>
+
+                <nav className="pt-2">
 
                     {
 
                         navItems.map((item) => (
 
                             <NavLink
+
                                 key={item.path}
+
                                 to={item.path}
-                                className={getNavLinkClass}
+
+                                className={getNavClass}
+
+                                onClick={() =>
+                                    setIsOpen(false)
+                                }
+
                             >
 
                                 <i
                                     className={`${item.icon} me-3`}
                                     style={{
-                                        width: "20px",
+                                        width: "22px",
                                     }}
                                 ></i>
 
@@ -106,90 +267,83 @@ function Sidebar() {
 
                 </nav>
 
-            </div>
+            </aside>
 
+            {/* ===============================
+                Desktop Sidebar
+            =============================== */}
 
-            {/* Mobile / Tablet Navigation */}
+            <aside
 
-            <div className="d-lg-none w-100">
+                className="bg-dark text-white d-none d-lg-flex flex-column"
 
-                <div className="bg-dark text-white px-3 py-3 d-flex justify-content-between align-items-center">
+                style={{
 
-                    <h5 className="mb-0 fw-bold">
+                    width: "260px",
+
+                    minHeight: "100vh",
+
+                    position: "sticky",
+
+                    top: 0,
+
+                    flexShrink: 0,
+
+                }}
+
+            >
+
+                <div
+                    className="border-bottom border-secondary"
+                    style={{
+                        padding: "24px",
+                    }}
+                >
+
+                    <h3
+                        className="fw-bold text-center mb-0"
+                    >
 
                         LassanaFlora
 
-                    </h5>
-
-                    <button
-                        type="button"
-                        className="btn btn-outline-light btn-sm"
-                        onClick={() =>
-                            setMobileMenuOpen(
-                                (prev) => !prev
-                            )
-                        }
-                        aria-label="Toggle navigation"
-                    >
-
-                        <i
-                            className={
-                                mobileMenuOpen
-                                    ? "fas fa-times"
-                                    : "fas fa-bars"
-                            }
-                        ></i>
-
-                    </button>
+                    </h3>
 
                 </div>
 
+                <nav className="pt-2 flex-grow-1">
 
-                {
+                    {
 
-                    mobileMenuOpen && (
+                        navItems.map((item) => (
 
-                        <div className="bg-dark text-white shadow">
+                            <NavLink
 
-                            <nav>
+                                key={item.path}
 
-                                {
+                                to={item.path}
 
-                                    navItems.map((item) => (
+                                className={getNavClass}
 
-                                        <NavLink
-                                            key={item.path}
-                                            to={item.path}
-                                            className={getNavLinkClass}
-                                            onClick={() =>
-                                                setMobileMenuOpen(false)
-                                            }
-                                        >
+                            >
 
-                                            <i
-                                                className={`${item.icon} me-3`}
-                                                style={{
-                                                    width: "20px",
-                                                }}
-                                            ></i>
+                                <i
+                                    className={`${item.icon} me-3`}
+                                    style={{
+                                        width: "22px",
+                                    }}
+                                ></i>
 
-                                            {item.label}
+                                {item.label}
 
-                                        </NavLink>
+                            </NavLink>
 
-                                    ))
+                        ))
 
-                                }
+                    }
 
-                            </nav>
+                </nav>
 
-                        </div>
-
-                    )
-
-                }
-
-            </div>
+            </aside>
 
         </>
 
