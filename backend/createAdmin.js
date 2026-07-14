@@ -4,7 +4,7 @@ import prisma from "./src/lib/prisma.js";
 async function main() {
 
     const password = await bcrypt.hash(
-        "gihan123",
+        "admin@123",
         10
     );
 
@@ -12,11 +12,11 @@ async function main() {
 
         data: {
 
-            firstName: "Gihan",
+            firstName: "Super",
 
-            lastName: "Niyumal",
+            lastName: "Admin",
 
-            email: "gihan@lassanaflora.com",
+            email: "admin@lassanaflora.com",
 
             password,
 
