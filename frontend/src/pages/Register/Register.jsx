@@ -174,7 +174,7 @@ export default function Register() {
               position: relative;
               overflow: hidden;
               background:
-                url("/img/bg/login-bg.png")
+                url("/img/bg/login-bg.webp")
                 center center / cover no-repeat;
               animation: lassanaRegisterVisualEnter
                 0.9s cubic-bezier(.22, 1, .36, 1);
