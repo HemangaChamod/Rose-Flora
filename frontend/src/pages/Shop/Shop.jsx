@@ -64,6 +64,11 @@ function Shop() {
     setAddedProduct,
   ] = useState(null);
 
+  const [
+    mobileFiltersOpen,
+    setMobileFiltersOpen,
+  ] = useState(false);
+
 
   const {
     addToCart,
@@ -82,6 +87,33 @@ function Shop() {
     loadShopData();
 
   }, []);
+
+
+  useEffect(() => {
+
+    if (!mobileFiltersOpen) {
+
+      return undefined;
+
+    }
+
+
+    const previousOverflow =
+      document.body.style.overflow;
+
+
+    document.body.style.overflow =
+      "hidden";
+
+
+    return () => {
+
+      document.body.style.overflow =
+        previousOverflow;
+
+    };
+
+  }, [mobileFiltersOpen]);
 
 
   const loadShopData = async () => {
@@ -384,6 +416,31 @@ function Shop() {
     }
 
   };
+
+
+  const handleClearFilters = () => {
+
+    setSearch("");
+
+    setSelectedCategory("");
+
+    setMinPrice(PRICE_MIN);
+
+    setMaxPrice(PRICE_MAX);
+
+  };
+
+
+  const activeFilterCount = [
+
+    search.trim() !== "",
+
+    selectedCategory !== "",
+
+    minPrice !== PRICE_MIN ||
+    maxPrice !== PRICE_MAX,
+
+  ].filter(Boolean).length;
 
 
   const minPricePercent =
@@ -698,6 +755,22 @@ function Shop() {
             }
 
 
+            .shop-mobile-controls {
+              display: none;
+            }
+
+
+            .shop-mobile-filter-backdrop {
+              display: none;
+            }
+
+
+            .shop-mobile-filter-header,
+            .shop-mobile-filter-footer {
+              display: none;
+            }
+
+
             @media (max-width: 575px) {
 
               .shop-cart-modal {
@@ -707,6 +780,444 @@ function Shop() {
 
               .shop-cart-actions {
                 flex-direction: column;
+              }
+
+
+              .ltn__shop-options {
+                display: none;
+              }
+
+
+              .shop-mobile-controls {
+                display: block;
+
+                margin-bottom: 24px;
+              }
+
+
+              .shop-mobile-result-count {
+                margin-bottom: 12px;
+
+                color: #777777;
+
+                font-size: 13px;
+
+                line-height: 1.4;
+              }
+
+
+              .shop-mobile-control-row {
+                display: grid;
+
+                grid-template-columns:
+                  minmax(0, 1fr)
+                  minmax(0, 1fr);
+
+                gap: 10px;
+              }
+
+
+              .shop-mobile-filter-button {
+                position: relative;
+
+                width: 100%;
+                height: 48px;
+
+                padding: 0 15px;
+
+                border:
+                  1px solid #e5e5e5;
+
+                background: #ffffff;
+
+                color: #222222;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                gap: 9px;
+
+                font-size: 14px;
+                font-weight: 600;
+
+                cursor: pointer;
+              }
+
+
+              .shop-mobile-filter-button i {
+                font-size: 15px;
+              }
+
+
+              .shop-mobile-filter-count {
+                min-width: 20px;
+                height: 20px;
+
+                padding: 0 6px;
+
+                border-radius: 20px;
+
+                background: #ef5b78;
+
+                color: #ffffff;
+
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+
+                font-size: 11px;
+                font-weight: 600;
+              }
+
+
+              .shop-mobile-sort {
+                position: relative;
+
+                width: 100%;
+              }
+
+
+              .shop-mobile-sort select {
+                width: 100%;
+                height: 48px;
+
+                margin: 0;
+
+                padding:
+                  0 38px 0 15px;
+
+                border:
+                  1px solid #e5e5e5;
+
+                border-radius: 0;
+
+                outline: none;
+
+                background: #ffffff;
+
+                color: #222222;
+
+                font-size: 13px;
+                font-weight: 500;
+
+                cursor: pointer;
+
+                -webkit-appearance: none;
+                appearance: none;
+              }
+
+
+              .shop-mobile-sort::after {
+                content: "⌄";
+
+                position: absolute;
+
+                top: 50%;
+                right: 15px;
+
+                transform:
+                  translateY(-58%);
+
+                color: #555555;
+
+                font-size: 17px;
+
+                pointer-events: none;
+              }
+
+
+              .shop-mobile-filter-backdrop {
+                position: fixed;
+
+                inset: 0;
+
+                z-index: 9998;
+
+                display: block;
+
+                background:
+                  rgba(0, 0, 0, 0.48);
+
+                opacity: 0;
+
+                visibility: hidden;
+
+                transition:
+                  opacity 0.3s ease,
+                  visibility 0.3s ease;
+              }
+
+
+              .shop-mobile-filter-backdrop.open {
+                opacity: 1;
+
+                visibility: visible;
+              }
+
+
+              .ltn__shop-sidebar {
+                position: fixed;
+
+                top: 0;
+                left: 0;
+
+                z-index: 9999;
+
+                width: 88%;
+                max-width: 360px;
+                height: 100dvh;
+
+                margin: 0;
+
+                padding:
+                  0 22px 100px;
+
+                background: #ffffff;
+
+                overflow-y: auto;
+
+                overscroll-behavior: contain;
+
+                transform:
+                  translateX(-105%);
+
+                transition:
+                  transform 0.3s ease;
+
+                box-shadow:
+                  8px 0 35px
+                  rgba(0, 0, 0, 0.12);
+              }
+
+
+              .ltn__shop-sidebar.mobile-open {
+                transform:
+                  translateX(0);
+              }
+
+
+              .shop-mobile-filter-header {
+                position: sticky;
+
+                top: 0;
+
+                z-index: 10;
+
+                min-height: 72px;
+
+                margin:
+                  0 -22px 25px;
+
+                padding:
+                  0 18px 0 22px;
+
+                border-bottom:
+                  1px solid #eeeeee;
+
+                background: #ffffff;
+
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              }
+
+
+              .shop-mobile-filter-header h3 {
+                margin: 0;
+
+                color: #222222;
+
+                font-size: 20px;
+                font-weight: 600;
+              }
+
+
+              .shop-mobile-filter-close {
+                width: 40px;
+                height: 40px;
+
+                padding: 0;
+
+                border: none;
+
+                background: transparent;
+
+                color: #333333;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                font-size: 28px;
+                font-weight: 300;
+
+                line-height: 1;
+
+                cursor: pointer;
+              }
+
+
+              .ltn__shop-sidebar .widget {
+                margin-bottom: 30px;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__widget-title {
+                margin-bottom: 18px;
+
+                font-size: 17px;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__search-widget {
+                margin-bottom: 30px;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__search-widget form {
+                position: relative;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__search-widget input {
+                width: 100%;
+                height: 50px;
+
+                padding:
+                  0 50px 0 15px;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__search-widget button {
+                position: absolute;
+
+                top: 0;
+                right: 0;
+
+                width: 50px;
+                height: 50px;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__menu-widget ul {
+                margin: 0;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__menu-widget ul li {
+                margin: 0;
+
+                border-bottom:
+                  1px solid #eeeeee;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__menu-widget ul li button {
+                width: 100%;
+
+                padding:
+                  13px 0;
+
+                border: none;
+
+                background: transparent;
+
+                color: #555555;
+
+                text-align: left;
+
+                font-size: 14px;
+
+                cursor: pointer;
+              }
+
+
+              .ltn__shop-sidebar
+              .ltn__menu-widget
+              ul
+              li
+              button.shop-category-active {
+                color: #ef5b78;
+
+                font-weight: 600;
+              }
+
+
+              .shop-mobile-filter-footer {
+                position: fixed;
+
+                bottom: 0;
+                left: 0;
+
+                z-index: 11;
+
+                width: 88%;
+                max-width: 360px;
+
+                padding:
+                  14px 18px;
+
+                border-top:
+                  1px solid #eeeeee;
+
+                background: #ffffff;
+
+                display: grid;
+
+                grid-template-columns:
+                  0.8fr 1.2fr;
+
+                gap: 10px;
+
+                transform:
+                  translateX(-105%);
+
+                transition:
+                  transform 0.3s ease;
+              }
+
+
+              .shop-mobile-filter-footer.open {
+                transform:
+                  translateX(0);
+              }
+
+
+              .shop-mobile-clear-button,
+              .shop-mobile-apply-button {
+                min-height: 48px;
+
+                padding: 0 12px;
+
+                border: none;
+
+                font-size: 13px;
+                font-weight: 600;
+
+                cursor: pointer;
+              }
+
+
+              .shop-mobile-clear-button {
+                background: #f5f5f5;
+
+                color: #333333;
+              }
+
+
+              .shop-mobile-apply-button {
+                background: #ef5b78;
+
+                color: #ffffff;
               }
 
             }
@@ -845,6 +1356,96 @@ function Shop() {
                     </li>
 
                   </ul>
+
+                </div>
+
+
+                {/* MOBILE FILTER AND SORT */}
+
+                <div className="shop-mobile-controls">
+
+                  <div className="shop-mobile-result-count">
+
+                    Showing{" "}
+
+                    {displayedProducts.length}
+
+                    {" "}of{" "}
+
+                    {filteredProducts.length}
+
+                    {" "}results
+
+                  </div>
+
+
+                  <div className="shop-mobile-control-row">
+
+                    <button
+                      type="button"
+                      className="shop-mobile-filter-button"
+                      onClick={() =>
+                        setMobileFiltersOpen(true)
+                      }
+                    >
+
+                      <i className="fas fa-sliders-h"></i>
+
+                      <span>
+                        Filter
+                      </span>
+
+
+                      {activeFilterCount > 0 && (
+
+                        <span className="shop-mobile-filter-count">
+
+                          {activeFilterCount}
+
+                        </span>
+
+                      )}
+
+                    </button>
+
+
+                    <div className="shop-mobile-sort">
+
+                      <select
+                        value={sort}
+                        onChange={(event) =>
+                          setSort(
+                            event.target.value
+                          )
+                        }
+                        aria-label="Sort products"
+                      >
+
+                        <option value="default">
+                          Default sorting
+                        </option>
+
+                        <option value="popularity">
+                          Popularity
+                        </option>
+
+                        <option value="new-arrivals">
+                          New arrivals
+                        </option>
+
+                        <option value="price-low">
+                          Price: low to high
+                        </option>
+
+                        <option value="price-high">
+                          Price: high to low
+                        </option>
+
+                      </select>
+
+                    </div>
+
+                  </div>
 
                 </div>
 
@@ -1305,11 +1906,62 @@ function Shop() {
               </div>
 
 
+              {/* MOBILE FILTER BACKDROP */}
+
+              <div
+                className={
+                  `shop-mobile-filter-backdrop ${
+                    mobileFiltersOpen
+                      ? "open"
+                      : ""
+                  }`
+                }
+                onClick={() =>
+                  setMobileFiltersOpen(false)
+                }
+              ></div>
+
+
               {/* SIDEBAR */}
 
               <div className="col-lg-3 mb-100">
 
-                <aside className="sidebar ltn__shop-sidebar">
+                <aside
+                  className={
+                    `sidebar ltn__shop-sidebar ${
+                      mobileFiltersOpen
+                        ? "mobile-open"
+                        : ""
+                    }`
+                  }
+                >
+
+
+                  {/* MOBILE FILTER HEADER */}
+
+                  <div className="shop-mobile-filter-header">
+
+                    <h3>
+
+                      Filters
+
+                    </h3>
+
+
+                    <button
+                      type="button"
+                      className="shop-mobile-filter-close"
+                      onClick={() =>
+                        setMobileFiltersOpen(false)
+                      }
+                      aria-label="Close filters"
+                    >
+
+                      ×
+
+                    </button>
+
+                  </div>
 
 
                   {/* SEARCH */}
@@ -1465,6 +2117,11 @@ function Shop() {
 
                         <button
                           type="button"
+                          className={
+                            selectedCategory === ""
+                              ? "shop-category-active"
+                              : ""
+                          }
                           onClick={() =>
                             setSelectedCategory("")
                           }
@@ -1484,6 +2141,12 @@ function Shop() {
 
                             <button
                               type="button"
+                              className={
+                                selectedCategory ===
+                                category.id
+                                  ? "shop-category-active"
+                                  : ""
+                              }
                               onClick={() =>
                                 setSelectedCategory(
                                   category.id
@@ -1505,6 +2168,44 @@ function Shop() {
                   </div>
 
                 </aside>
+
+
+                {/* MOBILE FILTER FOOTER */}
+
+                <div
+                  className={
+                    `shop-mobile-filter-footer ${
+                      mobileFiltersOpen
+                        ? "open"
+                        : ""
+                    }`
+                  }
+                >
+
+                  <button
+                    type="button"
+                    className="shop-mobile-clear-button"
+                    onClick={handleClearFilters}
+                  >
+
+                    Clear All
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    className="shop-mobile-apply-button"
+                    onClick={() =>
+                      setMobileFiltersOpen(false)
+                    }
+                  >
+
+                    Show {filteredProducts.length} Products
+
+                  </button>
+
+                </div>
 
               </div>
 

@@ -437,6 +437,234 @@ function Cart() {
                 flex-direction: column;
               }
 
+
+              .shoping-cart-table.table-responsive {
+                overflow: visible;
+              }
+
+
+              .shoping-cart-table .table {
+                width: 100%;
+                margin-bottom: 0;
+              }
+
+
+              .shoping-cart-table .table thead {
+                display: none;
+              }
+
+
+              .shoping-cart-table .table tbody {
+                display: block;
+                width: 100%;
+              }
+
+
+              .shoping-cart-table .table tbody tr {
+                position: relative;
+
+                display: grid;
+
+                grid-template-columns:
+                  105px minmax(0, 1fr);
+
+                grid-template-rows:
+                  auto auto auto;
+
+                column-gap: 14px;
+
+                width: 100%;
+
+                padding: 18px 32px 18px 0;
+
+                border-bottom:
+                  1px solid #eeeeee;
+              }
+
+
+              .shoping-cart-table
+              .table
+              tbody
+              tr
+              td {
+                border: none;
+
+                padding: 0;
+
+                width: auto;
+
+                min-width: 0;
+
+                text-align: left;
+
+                vertical-align: middle;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-remove {
+                position: absolute;
+
+                top: 8px;
+                right: 0;
+
+                z-index: 2;
+              }
+
+
+              .shoping-cart-table
+              .cart-remove-button {
+                width: 28px;
+                height: 28px;
+
+                padding: 0;
+
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                font-size: 18px;
+
+                line-height: 1;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-image {
+                grid-column: 1;
+                grid-row: 1 / 4;
+
+                align-self: center;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-image a {
+                display: block;
+
+                width: 105px;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-image img {
+                display: block;
+
+                width: 105px;
+                height: 105px;
+
+                max-width: none;
+
+                object-fit: cover;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-info {
+                grid-column: 2;
+                grid-row: 1;
+
+                align-self: end;
+
+                padding-right: 2px;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-info h4 {
+                margin: 0 0 5px;
+
+                font-size: 15px;
+
+                font-weight: 500;
+
+                line-height: 1.35;
+
+                white-space: nowrap;
+
+                overflow: hidden;
+
+                text-overflow: ellipsis;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-info h4 a {
+                display: block;
+
+                white-space: nowrap;
+
+                overflow: hidden;
+
+                text-overflow: ellipsis;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-info small {
+                display: block;
+
+                font-size: 12px;
+
+                line-height: 1.4;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-price {
+                grid-column: 2;
+                grid-row: 2;
+
+                align-self: center;
+
+                margin-top: 9px;
+
+                font-size: 16px;
+
+                font-weight: 600;
+
+                line-height: 1.3;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-quantity {
+                grid-column: 2;
+                grid-row: 3;
+
+                align-self: start;
+
+                margin-top: 10px;
+              }
+
+
+              .shoping-cart-table
+              .custom-cart-quantity {
+                width: 112px;
+                height: 38px;
+              }
+
+
+              .shoping-cart-table
+              .custom-cart-quantity button {
+                width: 36px;
+
+                font-size: 16px;
+              }
+
+
+              .shoping-cart-table
+              .custom-cart-quantity span {
+                font-size: 14px;
+              }
+
+
+              .shoping-cart-table
+              .cart-product-subtotal {
+                display: none;
+              }
+
             }
 
           `}
