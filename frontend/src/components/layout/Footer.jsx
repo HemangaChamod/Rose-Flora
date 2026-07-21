@@ -171,7 +171,7 @@ function Footer() {
             <div className="footer-copyright-left">
               <div className="ltn__copyright-design clearfix ">
                 <p>
-                  © <span className="current-year" /> Rose Flora. All rights reserved. Design & Developed by Codilent IT Solutions
+                  © <span className="current-year" /> Rose Flora. All rights reserved. 
                 </p>
               </div>
             </div>

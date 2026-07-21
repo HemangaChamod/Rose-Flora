@@ -142,7 +142,7 @@ function Login() {
                         }}
                     >
 
-                        LassanaFlora
+                        Rose Flora
 
                     </h2>
 
@@ -215,7 +215,7 @@ function Login() {
                                 }}
                             >
 
-                                Sign in securely to manage LassanaFlora.
+                                Sign in securely to manage Rose Flora.
 
                             </p>
 
@@ -307,7 +307,7 @@ function Login() {
                                         type="email"
                                         value={form.email}
                                         onChange={handleChange}
-                                        placeholder="admin@lassanaflora.com"
+                                        placeholder="admin@roseflora.lk"
                                         autoComplete="email"
                                         required
                                         style={{
@@ -522,7 +522,7 @@ function Login() {
                     }}
                 >
 
-                    © {new Date().getFullYear()} LassanaFlora
+                    © {new Date().getFullYear()} Rose Flora
 
                     <span className="mx-2">•</span>
 
