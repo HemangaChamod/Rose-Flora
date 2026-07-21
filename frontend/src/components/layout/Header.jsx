@@ -166,7 +166,7 @@ function Header() {
             }
 
             .custom-header-logo img {
-              max-width: 140px;
+              max-width: 150px;
             }
 
             .custom-mobile-menu-toggle {
@@ -217,7 +217,7 @@ function Header() {
 
           @media (max-width: 375px) {
             .custom-header-logo img {
-              max-width: 90px;
+              max-width: 150px;
             }
 
             .custom-header-actions {
