@@ -190,7 +190,7 @@ function Header() {
             }
 
             .custom-header-logo img {
-              max-width: 100px;
+              max-width: 180px;
             }
 
             .custom-header-actions {
