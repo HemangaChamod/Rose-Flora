@@ -451,7 +451,7 @@ function About() {
 
                   <p className="about-description">
 
-                    At Lassana Flora, we believe flowers are more than
+                    At Rose Flora, we believe flowers are more than
                     beautiful gifts. They are a simple and meaningful way
                     to express love, celebrate happiness, and make special
                     moments unforgettable.

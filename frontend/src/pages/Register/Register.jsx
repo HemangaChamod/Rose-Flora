@@ -594,7 +594,7 @@ export default function Register() {
           <section className="lassana-register-visual">
             <div className="lassana-register-visual-content">
               <span className="lassana-register-visual-label">
-                Join Lassana Flora
+                Join Rose Flora
               </span>
 
               <h2>
@@ -618,7 +618,7 @@ export default function Register() {
               </div>
 
               <h1 className="lassana-register-title">
-                Join Lassana Flora today
+                Join Rose Flora today
               </h1>
 
               <p className="lassana-register-description">

@@ -377,7 +377,7 @@ function Contact() {
                     </h3>
 
                     <p>
-                      contact@lassanaflora.lk
+                      contact@roseflora.lk
                     </p>
 
                   </div>
@@ -400,7 +400,7 @@ function Contact() {
                     </h3>
 
                     <p>
-                      +94 74 287 0823
+                      +94 77 888 2316
                     </p>
 
                   </div>
@@ -456,7 +456,7 @@ function Contact() {
                     <div className="contact-form-left">
 
                       <span>
-                        Contact Lassana Flora
+                        Contact Rose Flora
                       </span>
 
                       <h2>
@@ -498,7 +498,7 @@ function Contact() {
                         <p>
                           Need quick assistance?
                           <br />
-                          +94 74 287 0823
+                          +94 77 888 2316
                         </p>
 
                       </div>
@@ -515,7 +515,7 @@ function Contact() {
                         <p>
                           Send us an email
                           <br />
-                          contact@lassanaflora.lk
+                          contact@roseflora.lk
                         </p>
 
                       </div>

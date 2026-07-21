@@ -114,7 +114,7 @@ function Footer() {
                     </div>
                     <div className="footer-address-info">
                       <p>
-                        <a href="">+94 74 287 0823</a>
+                        <a href="">+94 77 888 2316</a>
                       </p>
                     </div>
                   </li>
@@ -125,7 +125,7 @@ function Footer() {
                     <div className="footer-address-info">
                       <p>
                         <a href="">
-                          contact@lassanflora.com
+                          contact@roseflora.lk
                         </a>
                       </p>
                     </div>
@@ -171,7 +171,7 @@ function Footer() {
             <div className="footer-copyright-left">
               <div className="ltn__copyright-design clearfix ">
                 <p>
-                  © <span className="current-year" /> Lassana Flora. All rights reserved. Design & Developed by Codilent IT Solutions
+                  © <span className="current-year" /> Rose Flora. All rights reserved. Design & Developed by Codilent IT Solutions
                 </p>
               </div>
             </div>

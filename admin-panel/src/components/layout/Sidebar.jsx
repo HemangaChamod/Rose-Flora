@@ -120,7 +120,7 @@ function Sidebar() {
                     className="mb-0 fw-bold"
                 >
 
-                    LassanaFlora
+                    Rose Flora
 
                 </h5>
 
@@ -213,7 +213,7 @@ function Sidebar() {
 
                     <h5 className="mb-0 fw-bold">
 
-                        LassanaFlora
+                        Rose Flora
 
                     </h5>
 
@@ -304,7 +304,7 @@ function Sidebar() {
                         className="fw-bold text-center mb-0"
                     >
 
-                        LassanaFlora
+                        Rose Flora
 
                     </h3>
 

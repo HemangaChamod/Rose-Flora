@@ -571,7 +571,7 @@ export default function Login() {
           <section className="lassana-login-visual">
             <div className="lassana-login-visual-content">
               <span className="lassana-login-visual-label">
-                Welcome to Lassana Flora
+                Welcome to Rose Flora
               </span>
 
               <h2>
@@ -599,7 +599,7 @@ export default function Login() {
               </h1>
 
               <p className="lassana-login-description">
-                Enter your account details to continue to Lassana Flora.
+                Enter your account details to continue to Rose Flora.
               </p>
 
 
@@ -695,7 +695,7 @@ export default function Login() {
 
 
                 <div className="lassana-login-register">
-                  New to Lassana Flora?
+                  New to Rose Flora?
 
                   <button
                     type="button"

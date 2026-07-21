@@ -49,7 +49,7 @@ function Header() {
           .custom-header-logo img {
             display: block;
             width: auto;
-            max-width: 155px;
+            max-width: 230px;
             height: auto;
           }
 
