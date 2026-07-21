@@ -1,6 +1,6 @@
-# LassanaFlora – Full-Stack Flower eCommerce Platform
+# Rose Flora – Full-Stack Flower eCommerce Platform
 
-LassanaFlora is a modern full-stack eCommerce web application designed for an online flower shop. The platform allows customers to explore flower products, create accounts, verify their email addresses, manage their shopping cart, and securely place orders using Cash on Delivery or card payments.
+Rose Flora is a modern full-stack eCommerce web application designed for an online flower shop. The platform allows customers to explore flower products, create accounts, verify their email addresses, manage their shopping cart, and securely place orders using Cash on Delivery or card payments.
 
 The project also includes a dedicated administration portal for managing products, categories, inventory, orders, and the overall eCommerce workflow.
 
@@ -35,7 +35,7 @@ The application is built with React and Vite for the frontend, Node.js and Expre
 
 ## 🛠️ Admin Portal
 
-LassanaFlora includes a separate administration application for managing the eCommerce platform.
+Rose Flora includes a separate administration application for managing the eCommerce platform.
 
 ### Admin Features
 
@@ -181,4 +181,4 @@ The application includes several security-focused implementation practices:
 
 ## 🌐 Live Applications
 
-👉 https://lassana-flora-two.vercel.app
+👉 https://rose-flora.vercel.app
