@@ -1,8 +1,3 @@
 
 /src/generated/prisma
 
-# Local utility scripts
-createAdmin.js
-deleteAllAdmin.js
-testMail.js
-clearTestData.js
